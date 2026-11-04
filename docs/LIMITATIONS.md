@@ -56,6 +56,11 @@ Read this before interpreting any output.
 
 ## Validation limitations
 
+* **Generalisation:** on held-out image pairs recall was about 0.5 (9/17), versus 0.94 on the pairs
+  used while developing the rules. Recall falls sharply when incidence angles differ by > 10°,
+  because the artifact rules then also suppress real blast zones. Treat ~50 % as the realistic
+  recovery rate for catalogue-class (2–20 m) new impacts in arbitrary well-registered pairs.
+
 * 19 documented positive sites only (all catalogued new impacts with HiRISE coverage both before and
   after formation). Precision estimates assume no other real change in each 1 km² window — real
   undocumented changes (e.g. slope streaks, other impacts) would be counted as false positives.

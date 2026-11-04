@@ -7,10 +7,12 @@ export default function Validation() {
   const [v, err] = usePoll(api.validation, 0);
   const [doc] = usePoll(() => api.doc("VALIDATION").catch(() => ""), 0);
   const [tab, setTab] = useState<"results" | "method">("results");
+  const [set, setSet] = useState<"crater_validation" | "crater_validation_holdout">("crater_validation_holdout");
   if (!v) return <div className="page"><Loading err={err} /></div>;
-  const cv = v.crater_validation;
+  const cv = v[set] || v.crater_validation;
   const m = cv?.metrics;
-  const inj = v.injection_sensitivity;
+  const injEasy = v.injection_sensitivity;
+  const inj = v.injection_sensitivity_hard || injEasy;
   const rs = v.registration_synthetic;
 
   const injDs = inj ? Array.from(new Set(inj.table.map((r: any) => r.diameter_m))) as number[] : [];
@@ -26,9 +28,15 @@ export default function Validation() {
             observations before and after formation, same-site negative controls, and clearly labelled synthetic tests.
           </p>
         </div>
+        <div className="row">
+        <div className="seg">
+          <button className={set === "crater_validation_holdout" ? "on" : ""} onClick={() => setSet("crater_validation_holdout")} disabled={!v.crater_validation_holdout}>Held-out pairs</button>
+          <button className={set === "crater_validation" ? "on" : ""} onClick={() => setSet("crater_validation")}>Tuning set</button>
+        </div>
         <div className="seg">
           <button className={tab === "results" ? "on" : ""} onClick={() => setTab("results")}>Results</button>
           <button className={tab === "method" ? "on" : ""} onClick={() => setTab("method")}>Method &amp; caveats</button>
+        </div>
         </div>
       </div>
       {tab === "method" ? <div className="panel"><Markdown text={doc || "docs/VALIDATION.md not found"} /></div> : !m ? (
@@ -36,8 +44,9 @@ export default function Validation() {
       ) : (
         <>
           <div className="notice" style={{ marginBottom: 14 }}>
-            Validation run #{cv.id} · code <span className="mono">{cv.code_version}</span> · {m.n_cases} sites ·{" "}
-            {m.n_positive_runs} positive, {m.n_prepre_runs} pre-pre and {m.n_postpost_runs} post-post runs · {m.n_failed_runs} failed runs (listed below).
+            {set === "crater_validation" ? "Tuning set — rules were revised after inspecting run 1 on these sites, so these numbers are optimistic. " : "Held-out image pairs — never inspected while developing the rules. "}
+            Validation run #{cv.id} · code <span className="mono">{cv.code_version}</span> · {m.n_cases} entries ·{" "}
+            {m.n_positive_runs} positive, {m.n_prepre_runs} pre-pre and {m.n_postpost_runs} post-post runs · {m.n_failed_runs} QC-rejected/failed · {m.n_skipped_runs ?? 0} skipped (listed below).
           </div>
           <div className="grid g2" style={{ marginBottom: 14 }}>
             <div className="panel">
@@ -108,13 +117,15 @@ export default function Validation() {
             <div className="grid g2" style={{ marginBottom: 14 }}>
               {inj && (
                 <div className="panel">
-                  <div className="panel-head"><h3>Sensitivity — synthetic injection</h3><span className="tag">SYNTHETIC</span></div>
+                  <div className="panel-head"><h3>Sensitivity — synthetic injection{v.injection_sensitivity_hard ? " (hard variant)" : ""}</h3><span className="tag">SYNTHETIC</span></div>
                   <Plot height={260} data={[{
                     type: "heatmap", x: injDs.map((d) => `${d} m`), y: injCs.map((c) => `${c * 100}%`),
                     z: injCs.map((c) => injDs.map((d) => inj.table.find((r: any) => r.diameter_m === d && r.halo_contrast === c)?.detection_rate ?? null)),
                     colorscale: [[0, "#1d222a"], [1, "#e0662f"]], zmin: 0, zmax: 1, texttemplate: "%{z:.2f}", hovertemplate: "D=%{x}, contrast=%{y}: %{z:.2f}<extra></extra>",
                   }]} layout={{ xaxis: { title: { text: "crater diameter" } }, yaxis: { title: { text: "halo contrast" } }, margin: { l: 60, r: 10, t: 4, b: 50 } }} />
-                  <div className="small faint">Artificial blast zones injected into real unchanged imagery; measures detectability only.</div>
+                  <div className="small faint">{v.injection_sensitivity_hard
+                    ? "Bowl-only craters (0 %) or bowl + faint compact halo (radius 3×D) injected into real unchanged imagery. The easy variant (8×D halo, ≥5 %) saturates at 100 %."
+                    : "Artificial blast zones injected into real unchanged imagery; measures detectability only."}</div>
                 </div>
               )}
               {rs && (
@@ -141,11 +152,11 @@ export default function Validation() {
                       <td><span className="tag">{r.kind.replace("neg:", "")}</span></td>
                       <td className="mono small">{r.before_id?.replace("_RED", "")} → {r.after_id?.replace("_RED", "")}</td>
                       <td className="num">{r.error ? "" : `${fmt(r.d_incidence, 0)}°`}</td>
-                      <td className="num">{r.error ? <span className="badge b-failed">error</span> : fmt(r.registration?.check_rms_px)}</td>
+                      <td className="num">{r.error ? <span className="badge b-failed">{r.input_rejected ? "QC reject" : "error"}</span> : r.skipped ? <span className="badge b-cancelled">skipped</span> : fmt(r.registration?.check_rms_px)}</td>
                       <td className="num">{r.n_candidates ?? "—"}</td>
                       <td>{r.kind === "positive" ? (r.match ? "✓" : "✗") : ""}</td>
                       <td className="num">{fmt(r.match?.score)}</td>
-                      <td className="small">{r.match ? `${r.match.category} / ${r.match.status}` : r.error ? r.error.slice(0, 60) : ""}</td>
+                      <td className="small" style={{ whiteSpace: "normal", maxWidth: 320 }}>{r.match ? `${r.match.category} / ${r.match.status}` : (r.error || r.skipped || "").slice(0, 90)}</td>
                       <td className="num">{r.match?.rank ?? ""}</td>
                       <td>{r.run_id && <Link to={`/viewer/${encodeURIComponent(r.run_id)}`}>view</Link>}</td>
                     </tr>

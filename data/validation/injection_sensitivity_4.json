@@ -1,0 +1,241 @@
+{
+ "label": "SYNTHETIC INJECTION into real HiRISE imagery (not real changes)",
+ "rows": [
+  {
+   "site": "D22-1020",
+   "diameter_m": 1.0,
+   "halo_contrast": 0.05,
+   "n": 7,
+   "hits": 7
+  },
+  {
+   "site": "D22-1020",
+   "diameter_m": 1.0,
+   "halo_contrast": 0.1,
+   "n": 7,
+   "hits": 7
+  },
+  {
+   "site": "D22-1020",
+   "diameter_m": 1.0,
+   "halo_contrast": 0.2,
+   "n": 7,
+   "hits": 7
+  },
+  {
+   "site": "D22-1020",
+   "diameter_m": 2.0,
+   "halo_contrast": 0.05,
+   "n": 7,
+   "hits": 7
+  },
+  {
+   "site": "D22-1020",
+   "diameter_m": 2.0,
+   "halo_contrast": 0.1,
+   "n": 7,
+   "hits": 7
+  },
+  {
+   "site": "D22-1020",
+   "diameter_m": 2.0,
+   "halo_contrast": 0.2,
+   "n": 7,
+   "hits": 7
+  },
+  {
+   "site": "D22-1020",
+   "diameter_m": 3.0,
+   "halo_contrast": 0.05,
+   "n": 7,
+   "hits": 7
+  },
+  {
+   "site": "D22-1020",
+   "diameter_m": 3.0,
+   "halo_contrast": 0.1,
+   "n": 7,
+   "hits": 7
+  },
+  {
+   "site": "D22-1020",
+   "diameter_m": 3.0,
+   "halo_contrast": 0.2,
+   "n": 7,
+   "hits": 7
+  },
+  {
+   "site": "D22-1020",
+   "diameter_m": 5.0,
+   "halo_contrast": 0.05,
+   "n": 7,
+   "hits": 7
+  },
+  {
+   "site": "D22-1020",
+   "diameter_m": 5.0,
+   "halo_contrast": 0.1,
+   "n": 7,
+   "hits": 7
+  },
+  {
+   "site": "D22-1020",
+   "diameter_m": 5.0,
+   "halo_contrast": 0.2,
+   "n": 7,
+   "hits": 7
+  },
+  {
+   "site": "D22-1020",
+   "diameter_m": 8.0,
+   "halo_contrast": 0.05,
+   "n": 7,
+   "hits": 7
+  },
+  {
+   "site": "D22-1020",
+   "diameter_m": 8.0,
+   "halo_contrast": 0.1,
+   "n": 7,
+   "hits": 7
+  },
+  {
+   "site": "D22-1020",
+   "diameter_m": 8.0,
+   "halo_contrast": 0.2,
+   "n": 7,
+   "hits": 7
+  },
+  {
+   "site": "D22-1020",
+   "diameter_m": 12.0,
+   "halo_contrast": 0.05,
+   "n": 7,
+   "hits": 7
+  },
+  {
+   "site": "D22-1020",
+   "diameter_m": 12.0,
+   "halo_contrast": 0.1,
+   "n": 7,
+   "hits": 7
+  },
+  {
+   "site": "D22-1020",
+   "diameter_m": 12.0,
+   "halo_contrast": 0.2,
+   "n": 7,
+   "hits": 7
+  }
+ ],
+ "table": [
+  {
+   "diameter_m": 1.0,
+   "halo_contrast": 0.05,
+   "n": 7,
+   "detection_rate": 1.0
+  },
+  {
+   "diameter_m": 1.0,
+   "halo_contrast": 0.1,
+   "n": 7,
+   "detection_rate": 1.0
+  },
+  {
+   "diameter_m": 1.0,
+   "halo_contrast": 0.2,
+   "n": 7,
+   "detection_rate": 1.0
+  },
+  {
+   "diameter_m": 2.0,
+   "halo_contrast": 0.05,
+   "n": 7,
+   "detection_rate": 1.0
+  },
+  {
+   "diameter_m": 2.0,
+   "halo_contrast": 0.1,
+   "n": 7,
+   "detection_rate": 1.0
+  },
+  {
+   "diameter_m": 2.0,
+   "halo_contrast": 0.2,
+   "n": 7,
+   "detection_rate": 1.0
+  },
+  {
+   "diameter_m": 3.0,
+   "halo_contrast": 0.05,
+   "n": 7,
+   "detection_rate": 1.0
+  },
+  {
+   "diameter_m": 3.0,
+   "halo_contrast": 0.1,
+   "n": 7,
+   "detection_rate": 1.0
+  },
+  {
+   "diameter_m": 3.0,
+   "halo_contrast": 0.2,
+   "n": 7,
+   "detection_rate": 1.0
+  },
+  {
+   "diameter_m": 5.0,
+   "halo_contrast": 0.05,
+   "n": 7,
+   "detection_rate": 1.0
+  },
+  {
+   "diameter_m": 5.0,
+   "halo_contrast": 0.1,
+   "n": 7,
+   "detection_rate": 1.0
+  },
+  {
+   "diameter_m": 5.0,
+   "halo_contrast": 0.2,
+   "n": 7,
+   "detection_rate": 1.0
+  },
+  {
+   "diameter_m": 8.0,
+   "halo_contrast": 0.05,
+   "n": 7,
+   "detection_rate": 1.0
+  },
+  {
+   "diameter_m": 8.0,
+   "halo_contrast": 0.1,
+   "n": 7,
+   "detection_rate": 1.0
+  },
+  {
+   "diameter_m": 8.0,
+   "halo_contrast": 0.2,
+   "n": 7,
+   "detection_rate": 1.0
+  },
+  {
+   "diameter_m": 12.0,
+   "halo_contrast": 0.05,
+   "n": 7,
+   "detection_rate": 1.0
+  },
+  {
+   "diameter_m": 12.0,
+   "halo_contrast": 0.1,
+   "n": 7,
+   "detection_rate": 1.0
+  },
+  {
+   "diameter_m": 12.0,
+   "halo_contrast": 0.2,
+   "n": 7,
+   "detection_rate": 1.0
+  }
+ ]
+}

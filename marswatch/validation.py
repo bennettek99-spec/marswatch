@@ -359,6 +359,14 @@ def summarize(results: list[dict], thresholds=(0.0, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7
         fpp, areap = fp_count([r for r in sel if r["kind"] == "positive"], 0.4, True)
         ill.append({"group": name, "runs": len(sel), "fp_per_km2_at_0.4": (fp + fpp) / (area + areap) if (area + areap) else None})
     out["illumination_breakdown"] = ill
+    rb = []
+    for name, lo, hi in (("Δinc ≤ 5°", -1, 5), ("5° < Δinc ≤ 10°", 5, 10), ("Δinc > 10°", 10, 999)):
+        sel = [r for r in pos if lo < r["d_incidence"] <= hi]
+        det = sum(1 for r in sel if r.get("match") and _real_match(r["match"]))
+        art = sum(1 for r in sel if r.get("match") and not _real_match(r["match"]))
+        rb.append({"group": name, "n": len(sel), "detected": det, "matched_but_labelled_artifact": art,
+                   "recall": det / len(sel) if sel else None})
+    out["recall_by_illumination"] = rb
     # post-post: what is detected near the crater (blast-zone evolution) and elsewhere
     out["postpost_detections_near_crater"] = sum(1 for r in post for c in r["candidates"] if c["dist_to_ref_m"] <= 100 and nonart(c))
     out["postpost_nonartifact_elsewhere_per_km2"] = (
@@ -424,8 +432,11 @@ def _inject(after: np.ndarray, rc: tuple[int, int], diameter_px: float, contrast
 
 def injection_sensitivity(db: Database | None = None, n_per_bin: int = 12, seed: int = 1,
                           diameters_m=(1.0, 2.0, 3.0, 5.0, 8.0, 12.0), contrasts=(0.05, 0.10, 0.20),
-                          res_m: float = 0.5, half_size_m: float = 500.0) -> dict:
-    """SYNTHETIC INJECTION into real unchanged (pre-pre) registered imagery."""
+                          res_m: float = 0.5, half_size_m: float = 500.0, halo_factor: float = 8.0) -> dict:
+    """SYNTHETIC INJECTION into real unchanged (pre-pre) registered imagery.
+
+    ``halo_factor`` = halo radius / crater diameter; contrast 0 injects the shaded bowl only (no halo).
+    """
     db = db or get_db()
     cases = [c for c in load_or_build_cases(db) if any(n["kind"] == "pre-pre" for n in c["negatives"])]
     rng = np.random.default_rng(seed)
@@ -458,7 +469,7 @@ def injection_sensitivity(db: Database | None = None, n_per_bin: int = 12, seed:
                 for k in range(n_per_bin // len(cases[:4]) + 1):
                     i = rng.integers(len(ys))
                     rc = (int(ys[i]) + 100, int(xs[i]) + 100)
-                    inj = _inject(ap.after, rc, D / res_m, con, sun)
+                    inj = _inject(ap.after, rc, D / res_m, con, sun, halo_factor=halo_factor)
                     cr = detect(bm, inj, valid, ap.fine.quality_map, res_m, resid)
                     cands = fuse.characterise(bm, inj, cr, ap.fine.quality_map, ctx, max_candidates=50)
                     tol = max(10.0, D * 4) / res_m
@@ -476,7 +487,8 @@ def injection_sensitivity(db: Database | None = None, n_per_bin: int = 12, seed:
         a[1] += r["n"]
     table = [{"diameter_m": k[0], "halo_contrast": k[1], "n": v[1], "detection_rate": v[0] / v[1] if v[1] else None}
              for k, v in sorted(agg.items())]
-    return {"label": "SYNTHETIC INJECTION into real HiRISE imagery (not real changes)", "rows": rows, "table": table}
+    return {"label": "SYNTHETIC INJECTION into real HiRISE imagery (not real changes)", "halo_factor": halo_factor,
+            "rows": rows, "table": table}
 
 
 def registration_synthetic(db: Database | None = None, n_trials: int = 8, seed: int = 2, res_m: float = 0.5) -> dict:
@@ -485,11 +497,17 @@ def registration_synthetic(db: Database | None = None, n_trials: int = 8, seed: 
     cases = load_or_build_cases(db)
     rng = np.random.default_rng(seed)
     trials = []
-    for t in range(n_trials):
+    from .imagery import QC_MIN_SNR, structure_snr
+
+    for t in range(len(cases) * 2):
+        if len(trials) >= n_trials:
+            break
         case = cases[t % len(cases)]
+        pid = case["positive"]["after_id"] if t >= len(cases) else case["positive"]["before_id"]
         grid = make_grid(case["lat"], case["lon"], 300, 300, res_m)
-        img, valid = RemoteImage(case["positive"]["before_id"]).read_to_grid(grid)
-        if valid.mean() < 0.9:
+        img, valid = RemoteImage(pid).read_to_grid(grid)
+        if valid.mean() < 0.9 or structure_snr(img, valid) < QC_MIN_SNR:
+            log.info(f"registration synthetic: skipping {pid} (coverage or structure SNR below QC threshold)")
             continue
         h, w = img.shape
         tx, ty = rng.uniform(-8, 8, 2)
@@ -507,12 +525,17 @@ def registration_synthetic(db: Database | None = None, n_trials: int = 8, seed: 
         fr = fine_register(img, valid, mov.astype(np.float32), mv, res_m)
         m = valid & mv
         m[:40], m[-40:], m[:, :40], m[:, -40:] = False, False, False, False
-        err = np.sqrt((fr.flow_x - fx) ** 2 + (fr.flow_y - fy) ** 2)[m]
-        trials.append({"site": case["ref_id"], "true_shift_px": [float(tx), float(ty)], "rot_deg": math.degrees(rot),
+        # mov(p) = img(p + f(p)); registration estimates g with mov(p + g(p)) = img(p), i.e. g(p) = -f(p + g(p)).
+        gx, gy = -fx.astype(np.float32), -fy.astype(np.float32)
+        for _ in range(5):  # fixed-point inversion of the known field
+            gx = -cv2.remap(fx.astype(np.float32), XX + gx, YY + gy, cv2.INTER_LINEAR)
+            gy = -cv2.remap(fy.astype(np.float32), XX + gx, YY + gy, cv2.INTER_LINEAR)
+        err = np.sqrt((fr.flow_x - gx) ** 2 + (fr.flow_y - gy) ** 2)[m]
+        trials.append({"site": case["ref_id"], "product_id": pid, "true_shift_px": [float(tx), float(ty)], "rot_deg": math.degrees(rot),
                        "jitter_amp_px": amp, "err_rms_px": float(np.sqrt((err ** 2).mean())),
                        "err_p90_px": float(np.percentile(err, 90)),
                        "checkpoint_rms_px": fr.diagnostics.check_rms_px, "quality": fr.diagnostics.quality})
-        log.info(f"registration synthetic trial {t}: true-field RMS error {trials[-1]['err_rms_px']:.3f}px "
+        log.info(f"registration synthetic trial {len(trials)}: true-field RMS error {trials[-1]['err_rms_px']:.3f}px "
                  f"(checkpoint estimate {fr.diagnostics.check_rms_px:.3f}px)")
     errs = [t["err_rms_px"] for t in trials]
     return {"label": "SYNTHETIC known warps of real HiRISE imagery", "trials": trials,

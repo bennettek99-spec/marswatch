@@ -232,3 +232,45 @@ def test_psf_match_reduces_blur_rings(hirise_crop):
     b2, a2, info = psf_match(hirise_crop, blurry, v)
     assert info["applied"] and info["blurred"] == "before" and 1.0 <= info["sigma_px"] <= 2.0
     assert np.abs(a2 - b2)[20:-20, 20:-20].mean() < 0.5 * raw
+
+
+def test_reports_render_on_empty_and_populated_db(tmp_db, tmp_path):
+    import time
+
+    from marswatch.reports import write_survey_report, write_validation_doc
+
+    p1 = write_survey_report(tmp_db, path=tmp_path / "s.md")
+    assert "Image pairs analysed: 0" in p1.read_text()
+    tmp_db.insert("validation_runs", {"kind": "crater_validation", "created_at": time.time(), "code_version": "x",
+                                      "metrics": {"n_cases": 1, "n_positive_runs": 1, "n_prepre_runs": 0, "n_postpost_runs": 0,
+                                                  "n_failed_runs": 0, "operating_points": [
+                                                      {"threshold": 0.0, "recall_any_category": 1.0, "recall_as_new_impact": 1.0, "tp": 1,
+                                                       "fp_in_positive_windows": 0, "fp_in_prepre_controls": 0,
+                                                       "fp_per_km2_positive_windows": 0.0, "fp_per_km2_prepre": float("nan"),
+                                                       "precision_window_assumption": 1.0}],
+                                                  "sensitivity_by_diameter_real": [], "illumination_breakdown": [],
+                                                  "registration_real": {"runs": 1, "checkpoint_rms_px_median": 0.4, "checkpoint_rms_px_p90": 0.5,
+                                                                        "status_counts": {"good": 1}, "coarse_offset_m_median": 50.0},
+                                                  "ml_deep_z": {"documented_median": 3.0, "other_candidates_median": 0.0, "auc": 1.0},
+                                                  "postpost_detections_near_crater": 0, "postpost_nonartifact_elsewhere_per_km2": None,
+                                                  "performance": {"median_seconds_per_run": 10.0, "seconds_per_km2": 10.0}},
+                                      "details": {"cases": []}})
+    txt = write_validation_doc(tmp_db, path=tmp_path / "v.md").read_text()
+    assert "Tuning set" in txt and "| 0.0 | 1.00 |" in txt
+
+
+def test_dust_storm_epochs():
+    from marswatch.discovery import dust_storm_epoch
+
+    assert dust_storm_epoch("2007-07-08T10:12:57") == "MY28"
+    assert dust_storm_epoch("2018-06-14T19:54:50") == "MY34"
+    assert dust_storm_epoch("2012-06-12T14:41:43") is None
+
+
+def test_followup_targeting_patterns():
+    from marswatch.followup import TARGETING_PATTERNS as P
+
+    assert P["impact"].search("Candidate recent impact site")
+    assert P["impact"].search("Monitoring new impact site")
+    assert P["slope_streak"].search("Dark slope streak monitoring site in Lycus Sulci")
+    assert not P["impact"].search("Layers in trough wall northwest of Olympus Rupes")

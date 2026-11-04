@@ -71,6 +71,15 @@ def overview() -> dict:
                 "n_cases": m.get("n_cases"), "operating_points": m.get("operating_points"),
                 "recall_at_0": op.get(0.0, {}).get("recall_any_category"),
                 "registration": m.get("registration_real"), "ml": m.get("ml_deep_z")}
+    ho = db.one("SELECT id, metrics, code_version FROM validation_runs WHERE kind='crater_validation_holdout' ORDER BY id DESC LIMIT 1")
+    holdout = None
+    if ho:
+        hm = ho["metrics"]
+        hop = {o["threshold"]: o for o in hm.get("operating_points", [])}
+        holdout = {"id": ho["id"], "code_version": ho["code_version"], "n_positive_runs": hm.get("n_positive_runs"),
+                   "recall_at_0": hop.get(0.0, {}).get("recall_any_category"),
+                   "fp_per_km2_prepre_at_0": hop.get(0.0, {}).get("fp_per_km2_prepre"),
+                   "operating_points": hm.get("operating_points")}
     timeline = db.query("SELECT started_at, finished_at, kind, area_km2 FROM runs WHERE status='done' ORDER BY started_at")
     return {
         "pairs_discovered": db.one("SELECT COUNT(*) n FROM pairs")["n"],
@@ -86,6 +95,7 @@ def overview() -> dict:
         "jobs": jobs,
         "worker": {"paused": is_paused(db), "embedded": _worker is not None},
         "validation": vsum,
+        "validation_holdout": holdout,
         "timeline": timeline,
     }
 
@@ -461,19 +471,21 @@ def system() -> dict:
 def validation() -> dict:
     db = get_db()
     out = {}
-    for kind in ("crater_validation", "injection_sensitivity", "registration_synthetic"):
+    for kind in ("crater_validation", "crater_validation_holdout", "injection_sensitivity", "injection_sensitivity_hard",
+                 "registration_synthetic"):
         v = db.one("SELECT id, created_at, code_version, metrics FROM validation_runs WHERE kind=? ORDER BY id DESC LIMIT 1", [kind])
-        if v and kind == "injection_sensitivity":
+        if v and kind in ("injection_sensitivity", "injection_sensitivity_hard"):
             d = db.one("SELECT details FROM validation_runs WHERE id=?", [v["id"]])["details"]
             v["table"] = d.get("table")
         if v and kind == "registration_synthetic":
             d = db.one("SELECT details FROM validation_runs WHERE id=?", [v["id"]])["details"]
             v["trials"] = d.get("trials")
-        if v and kind == "crater_validation":
+        if v and kind in ("crater_validation", "crater_validation_holdout"):
             d = db.one("SELECT details FROM validation_runs WHERE id=?", [v["id"]])["details"]
             v["cases"] = [{"ref_id": e["ref_id"], "diameter_m": e["diameter_m"],
                            "runs": [{k: r.get(k) for k in ("kind", "run_id", "before_id", "after_id", "d_incidence", "match",
-                                                           "nearest_dist_m", "n_candidates", "registration", "error")}
+                                                           "nearest_dist_m", "n_candidates", "registration", "error",
+                                                           "skipped", "input_rejected")}
                                     for r in e["runs"]]} for e in d["cases"]]
         out[kind] = v
     return out

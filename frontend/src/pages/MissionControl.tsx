@@ -45,9 +45,11 @@ export default function MissionControl() {
           sub={`${ov.observations_indexed.toLocaleString()} HiRISE RED products indexed`} />
         <Stat label="Candidate detections" value={ov.candidates}
           sub={`${ov.candidates_by_status.plausible_unverified || 0} plausible · ${ov.candidates_by_status.known_documented || 0} known`} />
-        <Stat label="Validation recall"
-          value={v ? `${fmt((op.find((o) => o.threshold === 0.3)?.recall_any_category ?? 0) * 100, 0)}%` : "—"}
-          sub={v ? `${v.n_cases} documented craters · score ≥ 0.3` : "run `marswatch validate`"} />
+        <Stat label="Recall — held-out pairs"
+          value={ov.validation_holdout ? `${fmt((ov.validation_holdout.recall_at_0 ?? 0) * 100, 0)}%` : "—"}
+          sub={ov.validation_holdout
+            ? `${ov.validation_holdout.n_positive_runs} documented-crater pairs · tuning set ${fmt((v?.recall_at_0 ?? 0) * 100, 0)}% (optimistic)`
+            : "run `marswatch validate --set holdout`"} />
       </div>
 
       <div className="grid g3" style={{ marginBottom: 14 }}>

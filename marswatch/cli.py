@@ -115,6 +115,19 @@ def cmd_serve(a) -> None:
     uvicorn.run("marswatch.api.app:app", host=a.host, port=a.port, log_level="info")
 
 
+def cmd_followup(a) -> None:
+    from .followup import followup_candidate
+
+    db = _db()
+    ids = a.ids
+    if a.top:
+        ids += [r["id"] for r in db.query(
+            "SELECT c.id FROM candidates c JOIN runs r ON r.run_id=c.run_id WHERE r.kind='survey' "
+            "AND c.classification='plausible_unverified' ORDER BY c.score DESC LIMIT ?", [a.top])]
+    for cid in ids:
+        print(json.dumps(followup_candidate(cid, db), indent=1, default=str))
+
+
 def cmd_report(a) -> None:
     from .reports import write_survey_report, write_validation_doc
 
@@ -159,6 +172,8 @@ def main(argv: list[str] | None = None) -> None:
         s = sp.add_parser(name); s.set_defaults(f=cmd_pause)
     s = sp.add_parser("serve"); s.add_argument("--host", default="127.0.0.1"); s.add_argument("--port", type=int, default=8000); s.set_defaults(f=cmd_serve)
     s = sp.add_parser("report"); s.add_argument("--region"); s.set_defaults(f=cmd_report)
+    s = sp.add_parser("followup", help="independent verification of candidates (catalogue, targeting, third image)")
+    s.add_argument("ids", type=int, nargs="*"); s.add_argument("--top", type=int, default=0); s.set_defaults(f=cmd_followup)
     a = p.parse_args(argv)
     a.f(a)
 

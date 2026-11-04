@@ -158,6 +158,21 @@ export default function CandidateDetail() {
         </div>
       </div>
 
+      {f.followup && (
+        <div className="panel" style={{ marginBottom: 14 }}>
+          <div className="panel-head"><h3>Follow-up verification</h3><span className="small faint">{new Date(f.followup.checked_at * 1000).toISOString().slice(0, 16)}</span></div>
+          <dl className="kv small">
+            <dt>Third-image persistence</dt>
+            <dd>{f.followup.third_image ? (f.followup.third_image.error ? `error: ${f.followup.third_image.error}` :
+              `${f.followup.third_image.reappears ? "✓ change reappears" : "✗ no matching change"} — before vs ${f.followup.third_image.product_id} (${f.followup.third_image.date}), registration ${f.followup.third_image.registration}`) : "no later HiRISE observation available"}</dd>
+            <dt>HiRISE targeting at this point</dt>
+            <dd>{Object.keys(f.followup.targeting || {}).length ? Object.entries(f.followup.targeting).map(([k, v]: any) => `${k}: ${v.length} obs (e.g. ${v[0]})`).join("; ") : "none matching change-related keywords"}</dd>
+            <dt>After-image caption</dt><dd>{f.followup.after_caption_title || "—"}</dd>
+            <dt>Catalogue within 2 km</dt><dd>{f.followup.catalogue_within_2km?.length ? f.followup.catalogue_within_2km.map((r: any) => `${r.ref_id} (${r.distance_m} m)`).join(", ") : "none"}</dd>
+          </dl>
+        </div>
+      )}
+
       <div className="panel">
         <div className="panel-head"><h3>Reviewer assessment</h3>{saved && <span className="small" style={{ color: "var(--ok)" }}>{saved}</span>}</div>
         <textarea rows={4} style={{ width: "100%" }} value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Notes: literature checks, additional observations inspected, interpretation…" />

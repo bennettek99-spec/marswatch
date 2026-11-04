@@ -27,6 +27,21 @@ candidates, and presents the evidence in a web dashboard.
   throughput are all produced by `marswatch validate` and written to
   [docs/VALIDATION_RESULTS.md](docs/VALIDATION_RESULTS.md).
 
+## Results at a glance (2026-11-04, detection code frozen at `0.3.0+bb6aa95341`)
+
+| What | Result |
+|---|---|
+| Registration (real pairs, held-out checkpoints) | median RMS 0.46 px (0.23 m at 0.5 m/px); 30–200 m pointing offsets corrected |
+| Registration (synthetic known warps) | true-field RMS 0.02–0.50 px; checkpoint estimate tracks it (reads 10–35 % low) |
+| Documented new craters, **held-out image pairs** | recall **0.53** (9/17), FP 0.6 /km² in pre-pre controls, precision* 0.33 (0.53 at score ≥ 0.6) |
+| Documented new craters, tuning pairs (optimistic) | recall 0.88 (15/17 usable), FP 0.5 /km² in pre-pre controls at score ≥ 0.6 |
+| Detection limit (synthetic, smooth terrain) | bowl-only craters ≥ 3 m (6 px) detected; 1–2 m only with a halo |
+| Input QC | every image failing it was acquired in the MY28 (2007) or MY34 (2018) global dust storms |
+| Survey | 17 pairs, 157 km² of Lycus Sulci + Arabia Terra; 231 candidates; **4 credible new dark slope streaks** after triage (one at a HiRISE monitoring site); no confirmed discoveries claimed |
+
+Details: [docs/VALIDATION_RESULTS.md](docs/VALIDATION_RESULTS.md), [docs/SURVEY_REPORT.md](docs/SURVEY_REPORT.md),
+[RESEARCH_LOG.md](RESEARCH_LOG.md).
+
 ## Quick start (Apple Silicon Mac mini, macOS)
 
 Requirements: Python ≥ 3.11, Node ≥ 18, ~3 GB free disk (index DB ≈ 100 MB, cache budget 2 GB by default).
@@ -90,7 +105,11 @@ marswatch validate --skip-craters --registration --injection   # synthetic regis
 ```
 
 ```bash
-marswatch report --region lycus-sulci                   # docs/SURVEY_REPORT.md
+marswatch followup --top 10                             # third-image persistence, HiRISE targeting history, catalogue
+```
+
+```bash
+marswatch report                                        # docs/SURVEY_REPORT.md + docs/VALIDATION_RESULTS.md
 ```
 
 ```bash

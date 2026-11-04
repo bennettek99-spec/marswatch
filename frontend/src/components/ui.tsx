@@ -42,7 +42,7 @@ const plotTheme = {
   margin: { l: 48, r: 16, t: 10, b: 40 },
   xaxis: { gridcolor: "#262c35", zerolinecolor: "#363f4b", linecolor: "#363f4b" },
   yaxis: { gridcolor: "#262c35", zerolinecolor: "#363f4b", linecolor: "#363f4b" },
-  legend: { orientation: "h", y: -0.2 },
+  legend: { orientation: "h", y: -0.32 },
   hoverlabel: { bgcolor: "#1d222a", bordercolor: "#363f4b", font: { color: "#e7e9ec" } },
 };
 
