@@ -254,6 +254,14 @@ def write_survey_report(db: Database, region: str | None = None, path: Path | No
             L.append(f"* Triage: {c['notes'].strip()}")
         L += [f"* Chip: `data/runs/{c['run_id']}/{(c['chips'] or {}).get('chip')}`", ""]
     arts = [c for c in cands if c["classification"] == "likely_artifact"]
+    flagged = [r for r in done if ((r["stats"] or {}).get("scene_test") or {}).get("flagged")]
+    if flagged:
+        L += ["## Scene-level artifact test", "",
+              "| pair | candidates | on steep relief | demoted | kept as strength outliers |", "|---|---|---|---|---|"]
+        for r in flagged:
+            st = r["stats"]["scene_test"]
+            L.append(f"| {r['pair_id']} | {st['n_candidates']} | {st['frac_on_relief'] * 100:.0f}% | {st['demoted']} | {st['survived_as_outliers']} |")
+        L.append("")
     L += ["## False positives and uncertainties", "",
           f"* {len(arts)} candidates were automatically classified as likely artifacts (shadow dipoles, cast shadows, "
           "contrast/haze differences, poor local registration).",

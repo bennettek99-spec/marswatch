@@ -128,6 +128,12 @@ def cmd_followup(a) -> None:
         print(json.dumps(followup_candidate(cid, db), indent=1, default=str))
 
 
+def cmd_export_static(a) -> None:
+    from .export import export_static
+
+    print(json.dumps(export_static(a.out, max_side=a.max_side, quality=a.quality), indent=1))
+
+
 def cmd_report(a) -> None:
     from .reports import write_survey_report, write_validation_doc
 
@@ -172,6 +178,9 @@ def main(argv: list[str] | None = None) -> None:
         s = sp.add_parser(name); s.set_defaults(f=cmd_pause)
     s = sp.add_parser("serve"); s.add_argument("--host", default="127.0.0.1"); s.add_argument("--port", type=int, default=8000); s.set_defaults(f=cmd_serve)
     s = sp.add_parser("report"); s.add_argument("--region"); s.set_defaults(f=cmd_report)
+    s = sp.add_parser("export-static", help="offline read-only dashboard snapshot (open index.html, no server)")
+    s.add_argument("out"); s.add_argument("--max-side", type=int, default=2400); s.add_argument("--quality", type=int, default=78)
+    s.set_defaults(f=cmd_export_static)
     s = sp.add_parser("followup", help="independent verification of candidates (catalogue, targeting, third image)")
     s.add_argument("ids", type=int, nargs="*"); s.add_argument("--top", type=int, default=0); s.set_defaults(f=cmd_followup)
     a = p.parse_args(argv)

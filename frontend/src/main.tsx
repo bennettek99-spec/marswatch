@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { BrowserRouter, NavLink, Route, Routes } from "react-router-dom";
+import { BrowserRouter, HashRouter, NavLink, Route, Routes } from "react-router-dom";
+import { isStatic, STATIC } from "./api";
 import "leaflet/dist/leaflet.css";
 import "./styles.css";
 import MissionControl from "./pages/MissionControl";
@@ -43,6 +44,7 @@ function App() {
           Imagery: NASA/JPL/University of Arizona HiRISE (PDS), USGS Astrogeology analysis-ready COGs.
           <br />
           Detections are candidates, not confirmed discoveries.
+          {isStatic && <><br /><br /><b style={{ color: "var(--warn)" }}>Offline snapshot</b> exported {STATIC.exported_at}. Read-only.</>}
         </div>
       </aside>
       <main className="main">
@@ -63,8 +65,6 @@ function App() {
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
+    {isStatic ? <HashRouter><App /></HashRouter> : <BrowserRouter><App /></BrowserRouter>}
   </React.StrictMode>,
 );

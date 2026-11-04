@@ -12,3 +12,5 @@ frontend/dist/
 data/logs/
 data/validation/partial_*.json
 frontend/tsconfig.tsbuildinfo
+exports/
+frontend/dist-static/

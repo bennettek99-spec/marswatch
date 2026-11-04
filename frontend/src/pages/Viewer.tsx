@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import OpenSeadragon from "openseadragon";
-import { api, CATEGORY_LABEL, fmt, fmtDate } from "../api";
+import { api, asset, CATEGORY_LABEL, fmt, fmtDate } from "../api";
 import { JobBadge, Loading, StatusBadge, usePoll } from "../components/ui";
 
 type Mode = "slider" | "side" | "blink";
@@ -13,7 +13,7 @@ const STATUS_COLOR: Record<string, string> = {
 function source(run: any, key: "before" | "after" | "heat" | "mask"): any {
   if (run.dzi?.[key]) return run.dzi[key];
   const ext = key === "heat" || key === "mask" ? "png" : "jpg";
-  return { type: "image", url: `/runs/${encodeURIComponent(run.run_id)}/${key}.${ext}` };
+  return { type: "image", url: asset(`/runs/${encodeURIComponent(run.run_id)}/${key}.${ext}`) };
 }
 
 function makeViewer(el: HTMLElement) {
@@ -193,8 +193,9 @@ export default function Viewer() {
         const ref = layer(v, "before") || layer(v, "after");
         if (!ref) return;
         cands.slice(0, 150).forEach((c: any, i: number) => {
-          const [r0, c0, r1, c1] = c.bbox;
-          const pad = 6;
+          const k = run.display_scale ?? 1;
+          const [r0, c0, r1, c1] = c.bbox.map((x: number) => x * k);
+          const pad = 6 * k;
           const rect = ref.imageToViewportRectangle(c0 - pad, r0 - pad, c1 - c0 + 2 * pad, r1 - r0 + 2 * pad);
           const d = document.createElement("div");
           d.style.border = `${c.id === sel ? 3 : 1.5}px solid ${STATUS_COLOR[c.classification] || "#fff"}`;
@@ -213,8 +214,9 @@ export default function Viewer() {
     [vA.current, vB.current].forEach((v) => {
       const ref = layer(v, "before") || layer(v, "after");
       if (!v || !ref) return;
-      const [r0, c0, r1, c1] = c.bbox;
-      const m = Math.max(60, (c1 - c0) * 1.5, (r1 - r0) * 1.5);
+      const k = run?.display_scale ?? 1;
+      const [r0, c0, r1, c1] = c.bbox.map((x: number) => x * k);
+      const m = Math.max(60 * k, (c1 - c0) * 1.5, (r1 - r0) * 1.5);
       v.viewport.fitBounds(ref.imageToViewportRectangle(c0 - m, r0 - m, c1 - c0 + 2 * m, r1 - r0 + 2 * m));
     });
   };
@@ -257,7 +259,7 @@ export default function Viewer() {
           </label>
           <label className="row small muted"><input type="checkbox" checked={outlines} onChange={(e) => setOutlines(e.target.checked)} />outlines</label>
           <label className="row small muted"><input type="checkbox" checked={boxes} onChange={(e) => setBoxes(e.target.checked)} />boxes</label>
-          <a className="btn" href={`/runs/${encodeURIComponent(run.run_id)}/report.md`} target="_blank" rel="noreferrer">report</a>
+          <a className="btn" href={asset(`/runs/${encodeURIComponent(run.run_id)}/report.md`)} target="_blank" rel="noreferrer">report</a>
         </div>
       </div>
       <div className="grid g-side">
@@ -304,6 +306,17 @@ export default function Viewer() {
             </dl>
             {reg.warnings?.map((w: string) => <div key={w} className="notice warn small" style={{ marginTop: 6 }}>{w}</div>)}
           </div>
+          {run.stats?.scene_test && (
+            <div className="panel">
+              <div className="panel-head"><h3>Scene-level test</h3><span className={`badge ${run.stats.scene_test.flagged ? "b-marginal" : "b-good"}`}>{run.stats.scene_test.flagged ? "flagged" : "pass"}</span></div>
+              <dl className="kv small">
+                <dt>Candidates on steep relief</dt><dd>{fmt(run.stats.scene_test.frac_on_relief * 100, 0)}% of {run.stats.scene_test.n_candidates}</dd>
+                <dt>Change pixels on relief</dt><dd>{fmt(run.stats.scene_test.relief_coupling_px, 1)}× chance</dd>
+                <dt>Difference explained by shading</dt><dd>{fmt(run.stats.scene_test.shading_r2 * 100, 0)}%</dd>
+                <dt>Demoted / kept as outliers</dt><dd>{run.stats.scene_test.demoted} / {run.stats.scene_test.survived_as_outliers}</dd>
+              </dl>
+            </div>
+          )}
           <div className="panel">
             <div className="panel-head">
               <h3>Candidates ({cands.length})</h3>

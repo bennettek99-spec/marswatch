@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { api, CandidateRow, CATEGORY_LABEL, fmt, STATUS_LABEL } from "../api";
+import { api, asset, isStatic, CandidateRow, CATEGORY_LABEL, fmt, STATUS_LABEL } from "../api";
 import { CategoryTag, Loading, ScoreBar, StatusBadge } from "../components/ui";
 
 const COLS: { key: string; label: string; sortable?: boolean; num?: boolean }[] = [
@@ -44,7 +44,8 @@ export default function Candidates() {
     if (sort === k) setOrder(order === "desc" ? "asc" : "desc");
     else { setSort(k); setOrder("desc"); }
   };
-  const exportUrl = (fmt: string) => `/api/export/candidates.${fmt}?${new URLSearchParams({ ...(status && { status }), ...(kind && { kind }) })}`;
+  const exportUrl = (fmt: string) => isStatic ? `data/candidates.${fmt}`
+    : `/api/export/candidates.${fmt}?${new URLSearchParams({ ...(status && { status }), ...(kind && { kind }) })}`;
 
   return (
     <div className="page" style={{ maxWidth: "none" }}>
@@ -99,7 +100,7 @@ export default function Candidates() {
               <tbody>
                 {data.items.map((c) => (
                   <tr key={c.id} className="clickable" onClick={() => nav(`/candidates/${c.id}`)}>
-                    <td>{c.chips?.chip && <img className="thumb" loading="lazy" src={`/runs/${encodeURIComponent(c.run_id)}/${c.chips.chip}`} alt="" />}</td>
+                    <td>{c.chips?.chip && <img className="thumb" loading="lazy" src={asset(`/runs/${encodeURIComponent(c.run_id)}/${c.chips.chip}`)} alt="" />}</td>
                     <td className="num mono">{c.id}</td>
                     <td><ScoreBar v={c.score} /></td>
                     <td><StatusBadge s={c.classification} />{c.known_match && <span className="tag" style={{ marginLeft: 4 }}>{c.known_match}</span>}</td>

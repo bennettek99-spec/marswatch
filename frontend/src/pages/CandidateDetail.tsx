@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { api, CandidateDetail as CD, CATEGORY_LABEL, fmt, fmtDate, Status, STATUS_LABEL } from "../api";
+import { api, asset, CandidateDetail as CD, CATEGORY_LABEL, fmt, fmtDate, Status, STATUS_LABEL } from "../api";
 import { CategoryTag, download, Loading, ScoreBar, StatusBadge } from "../components/ui";
 
 const FEATURE_LABELS: Record<string, string> = {
@@ -20,6 +20,7 @@ const FEATURE_LABELS: Record<string, string> = {
   deep_z: "CNN feature-change z (Method C)",
   disp_median_px: "Residual displacement (px)",
   artifact_index: "Artifact index",
+  shading_explained: "Shading-explained fraction (scene model)",
 };
 
 export default function CandidateDetail() {
@@ -45,6 +46,11 @@ export default function CandidateDetail() {
     { name: "Illumination comparable", pass: (c.pair?.d_incidence ?? 99) <= 10 && (c.pair?.d_sun_azimuth ?? 99) <= 30,
       detail: `Δinc ${fmt(c.pair?.d_incidence, 1)}°, Δsun az ${fmt(c.pair?.d_sun_azimuth, 0)}°` },
     { name: "Independent CNN evidence (unvalidated)", pass: f.deep_z === undefined ? null : f.deep_z > 3, detail: `deep z ${fmt(f.deep_z, 1)}` },
+    { name: "Scene-level test (pair not dominated by relief-bound responses)",
+      pass: f.scene_flagged === undefined ? null : !f.scene_flagged ? true : f.scene_shares_signature ? !!f.scene_outlier : true,
+      detail: f.scene_flagged === undefined ? "not computed (run predates v0.4)" : f.scene_flagged
+        ? (f.scene_shares_signature ? (f.scene_outlier ? "pair flagged; candidate is a strength outlier" : "pair flagged; candidate shares the relief-bound signature") : "pair flagged; candidate is off-relief")
+        : `pair not flagged; shading-explained ${fmt(f.shading_explained)}` },
     { name: "Matches catalogued change", pass: c.known_match ? true : null, detail: c.known_match || "no catalogued change within tolerance" },
   ];
   const review = async (cls?: Status) => {
@@ -73,7 +79,7 @@ export default function CandidateDetail() {
       {c.chips?.chip && (
         <div className="panel" style={{ marginBottom: 14 }}>
           <div className="panel-head"><h3>Evidence chips</h3><span className="small faint">before (radiometrically matched) · after · signed z (red = darker, blue = brighter)</span></div>
-          <img className="chip-img" src={`/runs/${encodeURIComponent(c.run_id)}/${c.chips.chip}`} alt="before, after, difference" />
+          <img className="chip-img" src={asset(`/runs/${encodeURIComponent(c.run_id)}/${c.chips.chip}`)} alt="before, after, difference" />
         </div>
       )}
 

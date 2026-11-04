@@ -27,17 +27,18 @@ candidates, and presents the evidence in a web dashboard.
   throughput are all produced by `marswatch validate` and written to
   [docs/VALIDATION_RESULTS.md](docs/VALIDATION_RESULTS.md).
 
-## Results at a glance (2026-11-04, detection code frozen at `0.3.0+bb6aa95341`)
+## Results at a glance (2026-11-04, detection code `0.4.0+0e782630d9`)
 
 | What | Result |
 |---|---|
 | Registration (real pairs, held-out checkpoints) | median RMS 0.46 px (0.23 m at 0.5 m/px); 30–200 m pointing offsets corrected |
 | Registration (synthetic known warps) | true-field RMS 0.02–0.50 px; checkpoint estimate tracks it (reads 10–35 % low) |
 | Documented new craters, **held-out image pairs** | recall **0.53** (9/17), FP 0.6 /km² in pre-pre controls, precision* 0.33 (0.53 at score ≥ 0.6) |
+| Scene-level artifact test (v0.4) | survey plausible candidates 143 → 25 with all 4 credible streaks kept; no documented crater demoted; FP in crater windows halved |
 | Documented new craters, tuning pairs (optimistic) | recall 0.88 (15/17 usable), FP 0.5 /km² in pre-pre controls at score ≥ 0.6 |
 | Detection limit (synthetic, smooth terrain) | bowl-only craters ≥ 3 m (6 px) detected; 1–2 m only with a halo |
 | Input QC | every image failing it was acquired in the MY28 (2007) or MY34 (2018) global dust storms |
-| Survey | 17 pairs, 157 km² of Lycus Sulci + Arabia Terra; 231 candidates; **4 credible new dark slope streaks** after triage (one at a HiRISE monitoring site); no confirmed discoveries claimed |
+| Survey | 17 pairs, 156 km² of Lycus Sulci + Arabia Terra; 25 plausible of 277 candidates; **4 credible new dark slope streaks** (one at a HiRISE monitoring site) and the **fading blast zone of catalogued crater D22-0041**; no confirmed discoveries claimed |
 
 Details: [docs/VALIDATION_RESULTS.md](docs/VALIDATION_RESULTS.md), [docs/SURVEY_REPORT.md](docs/SURVEY_REPORT.md),
 [RESEARCH_LOG.md](RESEARCH_LOG.md).
@@ -110,6 +111,10 @@ marswatch followup --top 10                             # third-image persistenc
 
 ```bash
 marswatch report                                        # docs/SURVEY_REPORT.md + docs/VALIDATION_RESULTS.md
+```
+
+```bash
+cd frontend && MW_STATIC=1 npx vite build && cd .. && marswatch export-static ~/Desktop/marswatch_snapshot   # offline dashboard
 ```
 
 ```bash

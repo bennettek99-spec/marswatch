@@ -245,3 +245,53 @@ its source; it now skips images below the QC threshold.
   produces dozens of individually unremarkable detections on relief. A scene-level test (fraction of
   detections co-located with high relief, or detection density vs relief) is the most valuable next
   step, followed by DEM orthorectification.
+
+
+---
+
+## v0.4 — scene-level artifact test (follow-up session)
+
+**Motivation.** In the v0.3 survey, 3 pairs produced 24–53 "plausible" candidates each, all
+individually unremarkable responses on relief (rims, fractures, dune-field walls): a pair-level
+photometric/parallax mismatch that per-candidate tests cannot see.
+
+**Development (on cached survey pairs; these pairs are therefore development data).**
+* Pixel-level *relief coupling* (share of change pixels on the steepest 20 % of terrain ÷ 0.2):
+  3.3× for the rim-arc pairs, but 0.9 for the haze-ring pair PSP_004175 → ESP_057118 (the halo lies
+  beyond the rim) — misses one artifact type.
+* *Shading model* (trimmed regression of the difference image on band-pass and gradient terms of the
+  before image): scene R² is high almost everywhere (0.37 even for the real-streak pair) — useless as a
+  pair-level gate. Per-candidate "shading-explained" separates some artifact pairs (median 0.55–0.61)
+  from real streaks (0.01) but not the rim-arc or haze-ring pairs (≈0.03–0.13).
+* *Candidate-population relief fraction* (share of a pair's candidates with relief index > 1.5)
+  separated cleanly: artifact pairs 0.7–1.0, real-streak pair 0.2.
+* Checked against validation: of 415 documented-crater detections only 23 % sit on relief; a
+  morphology exemption was rejected because 51–92 % of survey artifacts also pass the "radial
+  darkening" test (a dark ring around a crater looks radial).
+
+**Rule (v0.4.0).** Pair flagged if ≥ 12 candidates and ≥ 60 % on relief. In a flagged pair, a
+candidate on relief (or > 40 % shading-explained) is demoted (+0.35 artifact index → likely artifact
+or insufficient evidence) unless its peak |z| ≥ scene median + 3 MAD. Pixel coupling and shading R²
+are recorded as diagnostics only. Unit tests cover the rule and the zero-difference edge case.
+
+**Effect (code `0.4.0+0e782630d9`, survey and both validation sets re-run from scratch).**
+* Survey (17 pairs, 155.9 km²): plausible candidates **143 → 25**; 6 pairs flagged.
+  All 4 credible new slope streaks survived (now candidates 3442, 3314, 3315, 3316).
+* Validation: recall unchanged (tuning 0.88, held-out 0.53); *actionable* recall (matched and left
+  in known/plausible status) also 0.88 / 0.53 — no documented crater was demoted. False positives
+  in tuning positive windows halved (6.3 → 3.1 /km² at score ≥ 0; 0.88 → 0.61 at ≥ 0.6); precision*
+  0.46 → 0.55 at ≥ 0.6. Held-out and pre-pre numbers unchanged (those 1 km² windows rarely reach
+  12 candidates, so the test does not trigger there).
+* Limitation: the strength-outlier exemption keeps ~9 obvious rim artifacts in flagged pairs; and the
+  pre-pre false-positive density (~8.7 /km² at score ≥ 0 on the tuning sites) is untouched.
+
+**New finding from follow-up.** Candidate 3144 (PSP_004175_2060 → ESP_057118_2060) is a dark rayed
+blast zone that faded between 2007 and 2018. The after image's caption is "Recent Impact Crater" and
+catalogued crater D22-0041 (6.5 m, formed 2002-05…2004-02) lies 241 m away: very likely its blast
+zone fading — a documented process — found without being targeted. It was not auto-associated
+because association only links impacts formed inside a pair's time window (worth extending).
+
+**Offline snapshot.** `marswatch export-static OUT` writes a read-only dashboard that opens from
+disk (file://): static bundle (`MW_STATIC=1` IIFE build, hash routing, relative assets), all API
+responses embedded in `data.js`, re-encoded images (≤ 2400 px; candidate boxes rescaled), CSV/JSON
+and reports. Verified with headless Chromium from file:// — no console errors.

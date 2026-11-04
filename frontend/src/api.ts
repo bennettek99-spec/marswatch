@@ -75,7 +75,66 @@ export interface CandidateDetail extends CandidateRow {
   processing_history: { stage: string; detail: string }[];
 }
 
+// ---------------------------------------------------------------------------------------------
+// Offline snapshot mode: `marswatch export-static` writes data.js defining window.__MW_STATIC__,
+// and every API call is answered from that embedded, read-only data (no server needed).
+// ---------------------------------------------------------------------------------------------
+export const STATIC: any = (window as any).__MW_STATIC__;
+export const isStatic = !!STATIC;
+
+/** Asset URL: absolute on the live server, relative inside the offline snapshot. */
+export const asset = (path: string) => (isStatic ? path.replace(/^\//, "") : path);
+
+function staticCandidates(q: URLSearchParams) {
+  let rows: any[] = STATIC.candidates;
+  const st = q.get("status"), cat = q.get("category"), kind = q.get("kind"), text = q.get("q");
+  const minScore = +(q.get("min_score") || 0);
+  if (st) rows = rows.filter((r) => st.split(",").includes(r.classification));
+  if (cat) rows = rows.filter((r) => cat.split(",").includes(r.category));
+  if (kind) rows = rows.filter((r) => r.run_kind === kind);
+  if (text) rows = rows.filter((r) => [r.pair_id, r.known_match, r.notes, String(r.id)].some((v) => v && String(v).includes(text)));
+  rows = rows.filter((r) => r.score >= minScore);
+  const sort = q.get("sort") || "score", dir = q.get("order") === "asc" ? 1 : -1;
+  rows = [...rows].sort((a, b) => ((a[sort] ?? 0) > (b[sort] ?? 0) ? 1 : (a[sort] ?? 0) < (b[sort] ?? 0) ? -1 : 0) * dir);
+  const off = +(q.get("offset") || 0), lim = +(q.get("limit") || 100);
+  return { total: rows.length, items: rows.slice(off, off + lim) };
+}
+
+function staticGet(url: string, init?: RequestInit): any {
+  if (init && init.method && init.method !== "GET")
+    throw new Error("This is a read-only offline snapshot. Run the MARSWATCH server to queue jobs or edit reviews.");
+  const [path, qs] = url.split("?");
+  const q = new URLSearchParams(qs || "");
+  const S = STATIC;
+  let m: RegExpMatchArray | null;
+  if (path === "/api/overview") return S.overview;
+  if (path === "/api/runs") return q.get("kind") ? S.runs.filter((r: any) => r.kind === q.get("kind")) : S.runs;
+  if ((m = path.match(/^\/api\/runs\/([^/]+)\/report$/))) return S.runReports[decodeURIComponent(m[1])] ?? "Report not included in snapshot.";
+  if ((m = path.match(/^\/api\/runs\/([^/]+)$/))) {
+    const r = S.runDocs[decodeURIComponent(m[1])];
+    if (!r) throw new Error("This run is not included in the offline snapshot.");
+    return r;
+  }
+  if (path === "/api/candidates") return staticCandidates(q);
+  if ((m = path.match(/^\/api\/candidates\/(\d+)\/report$/))) return S.candidateReports[m[1]] ?? "";
+  if ((m = path.match(/^\/api\/candidates\/(\d+)$/))) {
+    const c = S.candidateDetails[m[1]];
+    if (!c) throw new Error("Candidate details not included in the offline snapshot.");
+    return c;
+  }
+  if (path === "/api/map") return S.map;
+  if (path === "/api/observations/covering") return [];
+  if (path === "/api/validation") return S.validation;
+  if ((m = path.match(/^\/api\/docs\/(\w+)$/))) return S.docs[m[1]] ?? "";
+  if (path === "/api/jobs") return S.jobs;
+  if (path === "/api/system") return S.system;
+  if (path === "/api/logs") return +(q.get("since_id") || 0) > 0 ? [] : S.logs;
+  if (path === "/api/pairs") return [];
+  throw new Error(`not available offline: ${path}`);
+}
+
 async function j<T>(url: string, init?: RequestInit): Promise<T> {
+  if (isStatic) return staticGet(url, init) as T;
   const r = await fetch(url, init);
   if (!r.ok) {
     let msg = `${r.status} ${r.statusText}`;
