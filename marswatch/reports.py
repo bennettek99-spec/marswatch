@@ -29,8 +29,8 @@ def write_validation_doc(db: Database, path: Path | None = None) -> Path:
          "Every number below was produced by `marswatch validate`, except the run-1 baseline line, which is "
          "transcribed from that run's log (the run was aborted before saving metrics)._", ""]
     L += ["## Summary", "",
-          "| set | code | positive runs | recall (usable pairs) | recall (QC-rejected = miss) | recall as new impact | FP/km² pre-pre | precision* | @ threshold |",
-          "|---|---|---|---|---|---|---|---|---|"]
+          "| set | code | positive runs | recall (usable pairs) | recall, actionable status | recall (QC-rejected = miss) | recall as new impact | FP/km² pre-pre | precision* | @ threshold |",
+          "|---|---|---|---|---|---|---|---|---|---|"]
     for kind, label in (("crater_validation", "tuning (rules developed on these sites)"), ("crater_validation_holdout", "held-out image pairs")):
         v = latest_validation(db, kind)
         if not v:
@@ -39,6 +39,7 @@ def write_validation_doc(db: Database, path: Path | None = None) -> Path:
             o = next((x for x in v["metrics"]["operating_points"] if abs(x["threshold"] - th) < 1e-9), None)
             if o:
                 L.append(f"| {label} | `{v['code_version']}` | {v['metrics']['n_positive_runs']} | {_fmt(o['recall_any_category'])} | "
+                         f"{_fmt(o.get('recall_actionable'))} | "
                          f"{_fmt(o.get('recall_counting_rejected_inputs_as_misses'))} | {_fmt(o['recall_as_new_impact'])} | "
                          f"{_fmt(o['fp_per_km2_prepre'])} | {_fmt(o['precision_window_assumption'])} | {th} |")
     L += ["", "Baseline (validation run 1, before any rule revision, centroid criterion): 12/16 completed positives "

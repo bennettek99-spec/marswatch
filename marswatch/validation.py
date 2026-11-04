@@ -336,6 +336,10 @@ def summarize(results: list[dict], thresholds=(0.0, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7
             "fp_per_km2_prepre": fp_pre / a_pre if a_pre else float("nan"),
             "precision_window_assumption": prec,
             "recall_counting_rejected_inputs_as_misses": tp / (len(pos) + n_rej) if (len(pos) + n_rej) else float("nan"),
+            # matched AND left in an actionable status (not demoted to insufficient evidence by e.g. the scene test)
+            "recall_actionable": (sum(1 for r in pos if r.get("match") and r["match"]["score"] >= th and _real_match(r["match"])
+                                      and r["match"]["status"] in ("known_documented", "plausible_unverified")) / len(pos))
+                                 if pos else float("nan"),
         })
     out["operating_points"] = table
     # matched-candidate rank (how high the documented change ranks within its window)

@@ -1488,3 +1488,15 @@
 {"ts": "2026-11-04T04:15:09Z", "level": "INFO", "logger": "marswatch.worker", "msg": "worker paused"}
 {"ts": "2026-11-04T04:15:09Z", "level": "WARNING", "logger": "marswatch.worker", "msg": "re-queued 1 interrupted jobs"}
 {"ts": "2026-11-04T04:15:09Z", "level": "WARNING", "logger": "marswatch.worker", "msg": "job 1 input rejected: structure SNR 1.0", "job_id": 1}
+{"ts": "2026-11-04T22:38:58Z", "level": "INFO", "logger": "marswatch.worker", "msg": "worker paused"}
+{"ts": "2026-11-04T22:39:00Z", "level": "WARNING", "logger": "marswatch.worker", "msg": "job 1 failed (attempt 1); retrying in 30s: network down", "job_id": 1}
+{"ts": "2026-11-04T22:39:00Z", "level": "ERROR", "logger": "marswatch.worker", "msg": "job 1 failed permanently: network down", "job_id": 1}
+{"ts": "2026-11-04T22:39:00Z", "level": "INFO", "logger": "marswatch.worker", "msg": "worker paused"}
+{"ts": "2026-11-04T22:39:00Z", "level": "WARNING", "logger": "marswatch.worker", "msg": "re-queued 1 interrupted jobs"}
+{"ts": "2026-11-04T22:39:00Z", "level": "WARNING", "logger": "marswatch.worker", "msg": "job 1 input rejected: structure SNR 1.0", "job_id": 1}
+{"ts": "2026-11-04T22:39:13Z", "level": "INFO", "logger": "marswatch.worker", "msg": "worker paused"}
+{"ts": "2026-11-04T22:39:14Z", "level": "WARNING", "logger": "marswatch.worker", "msg": "job 1 failed (attempt 1); retrying in 30s: network down", "job_id": 1}
+{"ts": "2026-11-04T22:39:14Z", "level": "ERROR", "logger": "marswatch.worker", "msg": "job 1 failed permanently: network down", "job_id": 1}
+{"ts": "2026-11-04T22:39:14Z", "level": "INFO", "logger": "marswatch.worker", "msg": "worker paused"}
+{"ts": "2026-11-04T22:39:14Z", "level": "WARNING", "logger": "marswatch.worker", "msg": "re-queued 1 interrupted jobs"}
+{"ts": "2026-11-04T22:39:14Z", "level": "WARNING", "logger": "marswatch.worker", "msg": "job 1 input rejected: structure SNR 1.0", "job_id": 1}

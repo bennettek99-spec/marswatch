@@ -29,8 +29,8 @@ from .align import AlignedPair, align_pair
 from .archive.reference import nearby_references
 from .config import settings
 from .db import Database, get_db
-from .detect import fuse, ml
-from .detect.classical import ClassicalParams, detect
+from .detect import fuse, ml, scene
+from .detect.classical import ClassicalParams, detect, gradient_mag
 from .discovery import dust_storm_epoch, make_pair_id, score_pair
 from .geometry import angular_diff, footprint, haversine_m
 from .imagery import (QC_MIN_SNR, Grid, RemoteImage, cog_url, grid_for_polygon, input_quality, make_grid,
@@ -40,7 +40,7 @@ from .normalize import psf_match, radiometric_match, to_display
 
 log = get_logger("pipeline")
 
-PIPELINE_VERSION = "0.3.0"
+PIPELINE_VERSION = "0.4.0"
 
 
 MAX_FALLBACK_RES_M = 4.0
@@ -284,6 +284,14 @@ def run_pair(before_id: str, after_id: str, aoi: dict | None = None, *, db: Data
             c["evidence_against"].append(f"pair registration is poor overall (quality {diag.quality:.2f}); "
                                          "differences cannot be distinguished from misregistration")
 
+    # ---- 3b. scene-level (pair-level) artifact test ---------------------------------------
+    t = time.time()
+    scene_st, shade_pred = scene.scene_stats(bm, after_cmp, cr.mask, cr.analysis_mask, gradient_mag(bm), len(cands))
+    scene_summary = scene.apply_scene_test(cands, cr.labels, cr.diff, shade_pred, scene_st)
+    if scene_summary["flagged"]:
+        rlog.info(f"scene-level test flagged pair: {scene_summary}")
+    timings["scene_test_s"] = time.time() - t
+
     # ---- 4. outputs ------------------------------------------------------------------
     prog(0.85, "writing outputs")
     t = time.time()
@@ -331,6 +339,7 @@ def run_pair(before_id: str, after_id: str, aoi: dict | None = None, *, db: Data
         "by_category": {k: sum(1 for c in cands if c["category"] == k) for k in fuse.CATEGORIES},
         "by_status": {k: sum(1 for c in cands if c["classification"] == k)
                       for k in ("known_documented", "plausible_unverified", "likely_artifact", "insufficient_evidence")},
+        "scene_test": scene_summary,
         "noise_sigma_IF": cr.noise_sigma,
         "valid_fraction": float(valid.mean()),
         "analysed_fraction": float(cr.analysis_mask.mean()),
@@ -483,6 +492,10 @@ def render_report(doc: dict) -> str:
         f"Robust noise σ = {st['noise_sigma_IF']:.4g} I/F. Candidates: {st['n_candidates']}.",
         "",
         "By status: " + ", ".join(f"{k}: {v}" for k, v in st["by_status"].items()),
+        "",
+        "Scene-level test: " + (f"FLAGGED — {st['scene_test']['frac_on_relief'] * 100:.0f}% of {st['scene_test']['n_candidates']} candidates on steep "
+                                f"relief; {st['scene_test']['demoted']} demoted, {st['scene_test']['survived_as_outliers']} kept as strength outliers"
+                                if st.get("scene_test", {}).get("flagged") else "not flagged"),
         "",
         "By category: " + ", ".join(f"{k}: {v}" for k, v in st["by_category"].items() if v),
         "",

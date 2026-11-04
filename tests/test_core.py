@@ -274,3 +274,51 @@ def test_followup_targeting_patterns():
     assert P["impact"].search("Monitoring new impact site")
     assert P["slope_streak"].search("Dark slope streak monitoring site in Lycus Sulci")
     assert not P["impact"].search("Layers in trough wall northwest of Olympus Rupes")
+
+
+def _cand(label, z, relief, cls="plausible_unverified"):
+    return {"label": label, "max_abs_z": z, "artifact_index": 0.2, "classification": cls, "evidence_for": [],
+            "evidence_against": [], "features": {"relief_index": relief}}
+
+
+def test_scene_test_demotes_relief_population_but_keeps_outliers():
+    from marswatch.detect.scene import SceneStats, apply_scene_test
+
+    labels = np.zeros((40, 40), int)
+    for i in range(1, 16):
+        labels[i, :] = i
+    diff = np.zeros((40, 40), np.float32)
+    pred = np.zeros((40, 40), np.float32)
+    cands = [_cand(i, 7.0 + 0.1 * i, 2.5) for i in range(1, 14)] + [_cand(14, 18.0, 2.5), _cand(15, 7.2, 0.8)]
+    s = apply_scene_test(cands, labels, diff, pred, SceneStats())
+    assert s["flagged"] and s["demoted"] == 13 and s["survived_as_outliers"] == 1
+    assert cands[13]["classification"] == "plausible_unverified"      # strong outlier kept
+    assert cands[14]["classification"] == "plausible_unverified"      # off-relief candidate untouched
+    assert cands[0]["classification"] == "likely_artifact"           # 0.2 + 0.35 >= 0.5
+
+
+def test_scene_test_not_flagged_for_small_or_smooth_populations():
+    from marswatch.detect.scene import SceneStats, apply_scene_test
+
+    labels = np.zeros((10, 10), int)
+    labels[1] = 1
+    z = np.zeros((10, 10), np.float32)
+    few = [_cand(1, 7.0, 3.0)] * 5
+    assert not apply_scene_test(few, labels, z, z, SceneStats())["flagged"]
+    smooth = [_cand(1, 7.0, 0.9) for _ in range(20)]
+    assert not apply_scene_test(smooth, labels, z, z, SceneStats())["flagged"]
+
+
+def test_shading_model_explains_contrast_difference_not_new_feature(hirise_crop):
+    from marswatch.detect.scene import shading_explained, shading_model
+
+    v = np.ones_like(hirise_crop, bool)
+    import cv2
+
+    hp = hirise_crop - cv2.GaussianBlur(hirise_crop, (0, 0), 6)
+    after = hirise_crop + 0.6 * hp                       # SYNTHETIC: shading contrast differs between images
+    after[300:330, 300:330] -= 0.02                      # SYNTHETIC: a genuinely new dark patch
+    pred, r2, _ = shading_model(hirise_crop, after, v)
+    assert r2 > 0.5
+    new = np.zeros_like(v); new[305:325, 305:325] = True
+    assert shading_explained(after - hirise_crop, pred, new) < 0.3
