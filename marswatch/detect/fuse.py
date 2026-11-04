@@ -59,6 +59,7 @@ class FusionContext:
     reg_quality: float
     reg_rms_px: float
     low_snr: bool = False
+    dust_storm: bool = False
 
 
 def shadow_mask(img: np.ndarray, valid: np.ndarray, k: float = 2.5) -> np.ndarray:
@@ -183,6 +184,9 @@ def fuse_one(comp: dict, f: dict, ctx: FusionContext) -> dict:
     if ctx.low_snr:
         art += 0.2
         ev_against.append("one image has low structure SNR (haze/dust): shading and noise differences are likely")
+    if ctx.dust_storm and not ctx.low_snr:
+        art += 0.15
+        ev_against.append("an image was acquired during a global dust storm: haze changes shading contrast non-linearly")
     if f["near_mask_edge"]:
         art += 0.1
         ev_against.append("within 20 px of the valid-overlap boundary")

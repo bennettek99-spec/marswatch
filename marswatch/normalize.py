@@ -87,3 +87,42 @@ def to_display(img: np.ndarray, valid: np.ndarray, lo_p: float = 0.5, hi_p: floa
     out = np.clip((img - lo) / max(hi - lo, 1e-9) * 255, 0, 255).astype(np.uint8)
     out[~valid] = 0
     return out, (lo, hi)
+
+
+def psf_match(before: np.ndarray, after: np.ndarray, valid: np.ndarray,
+              sigmas: tuple[float, ...] = (0.5, 0.75, 1.0, 1.5, 2.0, 2.5, 3.0)) -> tuple[np.ndarray, np.ndarray, dict]:
+    """Equalise effective resolution (PSF) of two registered images.
+
+    Different binning, atmospheric haze or smear make one image sharper; differencing then produces
+    rings around every topographic feature. We measure fine-scale gradient energy (Laplacian
+    variance, albedo-normalised) of both, and blur the sharper image with the Gaussian whose result
+    best matches the blurrier one. Standard PSF-matching step in image-differencing pipelines.
+    """
+    m = valid
+    if m.sum() < 1000:
+        return before, after, {"applied": False}
+
+    def energy(x: np.ndarray) -> float:
+        # band-limited (DoG σ=1–3 px) contrast: sensitive to PSF width, insensitive to pixel noise
+        x = x.astype(np.float32)
+        band = cv2.GaussianBlur(x, (0, 0), 1.0) - cv2.GaussianBlur(x, (0, 0), 3.0)
+        return float(band[m].std() / (abs(float(x[m].mean())) + 1e-9))
+
+    eb, ea = energy(before), energy(after)
+    ratio = eb / (ea + 1e-12)
+    info = {"energy_before": eb, "energy_after": ea, "ratio": ratio, "applied": False, "sigma_px": 0.0, "blurred": None}
+    if 0.87 < ratio < 1.15:
+        return before, after, info
+    sharp_is_before = ratio > 1.0
+    sharp, target = (before, ea) if sharp_is_before else (after, eb)
+    best_s, best_err = 0.0, abs(np.log(max(eb, ea) / min(eb, ea)))
+    for s in sigmas:
+        e = energy(cv2.GaussianBlur(sharp, (0, 0), s))
+        err = abs(np.log(e / target))
+        if err < best_err:
+            best_s, best_err = s, err
+    if best_s == 0.0:
+        return before, after, info
+    blurred = cv2.GaussianBlur(sharp, (0, 0), best_s)
+    info.update(applied=True, sigma_px=best_s, blurred="before" if sharp_is_before else "after")
+    return (blurred, after, info) if sharp_is_before else (before, blurred, info)

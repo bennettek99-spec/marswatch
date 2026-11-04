@@ -54,6 +54,19 @@ class PairInfo:
         return d
 
 
+# Planet-encircling dust storms (atmospheric opacity high for weeks–months). All images that failed our
+# structure-SNR gate during validation fall inside these windows (RESEARCH_LOG). Dates are generous bounds.
+GLOBAL_DUST_STORMS = (("MY28", "2007-06-01", "2007-11-15"), ("MY34", "2018-05-25", "2018-10-31"))
+
+
+def dust_storm_epoch(start_time: str | None) -> str | None:
+    d = (start_time or "")[:10]
+    for name, a, b in GLOBAL_DUST_STORMS:
+        if a <= d <= b:
+            return name
+    return None
+
+
 def _dt(s: str) -> datetime:
     return datetime.fromisoformat(s.strip().replace("Z", "")[:19])
 
@@ -92,6 +105,11 @@ def score_pair(a: dict, b: dict, crit: PairCriteria | None = None) -> PairInfo |
         s *= math.exp(-d_ls / 40.0)  # seasonal frost dominates at high latitude
         if d_ls > 30:
             notes.append(f"high-latitude pair with dLs={d_ls:.0f}°: seasonal frost differences expected")
+    storms = {k: e for k, e in (("before", dust_storm_epoch(a["start_time"])), ("after", dust_storm_epoch(b["start_time"]))) if e}
+    if storms:
+        s *= 0.3
+        notes.append("acquired during a global dust storm (" + ", ".join(f"{k}: {v}" for k, v in storms.items())
+                     + "): haze alters shading non-linearly")
     if dt < crit.min_dt_days:
         notes.append(f"dt={dt:.1f} d: probable stereo pair, not a change pair")
         s *= 0.05

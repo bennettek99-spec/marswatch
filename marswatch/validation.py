@@ -41,7 +41,7 @@ from .discovery import observations_covering, score_pair
 from .geometry import haversine_m
 from .imagery import RemoteImage, cog_available, make_grid
 from .log import get_logger
-from .normalize import radiometric_match
+from .normalize import psf_match, radiometric_match
 from .pipeline import code_version, run_pair
 from .registration import fine_register
 
@@ -439,7 +439,9 @@ def injection_sensitivity(db: Database | None = None, n_per_bin: int = 12, seed:
         if ap.fine.diagnostics.quality < 0.2:
             continue
         valid = ap.valid
-        bm, _ = radiometric_match(ap.before, ap.after, valid)
+        b_psf, a_psf, _ = psf_match(ap.before, ap.after, valid)
+        bm, _ = radiometric_match(b_psf, a_psf, valid)
+        ap.after = a_psf
         resid = ap.fine.diagnostics.check_rms_px or 1.0
         sun = fuse.sun_vector_angle(oa["sub_solar_azimuth"], oa["north_azimuth"]) or 0.0
         ctx = fuse.FusionContext(res_m, case["lat"], neg["d_incidence"], 0.0, neg["d_sun_azimuth"], sun, sun,

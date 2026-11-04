@@ -219,3 +219,16 @@ def test_summarize_counts():
     assert op0["recall_any_category"] == 0.5 and op0["tp"] == 1
     assert op0["fp_in_positive_windows"] == 1 and op0["fp_in_prepre_controls"] == 1
     assert m["ml_deep_z"]["auc"] == 1.0
+
+
+def test_psf_match_reduces_blur_rings(hirise_crop):
+    from marswatch.normalize import psf_match
+
+    import cv2
+
+    v = np.ones_like(hirise_crop, bool)
+    blurry = cv2.GaussianBlur(hirise_crop, (0, 0), 1.5)  # SYNTHETIC blur of real imagery
+    raw = np.abs(blurry - hirise_crop)[20:-20, 20:-20].mean()
+    b2, a2, info = psf_match(hirise_crop, blurry, v)
+    assert info["applied"] and info["blurred"] == "before" and 1.0 <= info["sigma_px"] <= 2.0
+    assert np.abs(a2 - b2)[20:-20, 20:-20].mean() < 0.5 * raw

@@ -31,12 +31,12 @@ from .config import settings
 from .db import Database, get_db
 from .detect import fuse, ml
 from .detect.classical import ClassicalParams, detect
-from .discovery import make_pair_id, score_pair
+from .discovery import dust_storm_epoch, make_pair_id, score_pair
 from .geometry import angular_diff, footprint, haversine_m
 from .imagery import (QC_MIN_SNR, Grid, RemoteImage, cog_url, grid_for_polygon, input_quality, make_grid,
                       pds_jp2_url, uahirise_url)
 from .log import get_logger
-from .normalize import radiometric_match, to_display
+from .normalize import psf_match, radiometric_match, to_display
 
 log = get_logger("pipeline")
 
@@ -217,9 +217,12 @@ def run_pair(before_id: str, after_id: str, aoi: dict | None = None, *, db: Data
     # ---- 2. normalise + detect -----------------------------------------------------
     prog(0.5, "detecting")
     t = time.time()
-    bm, rad_info = radiometric_match(ap.before, ap.after, valid)
+    b_psf, a_psf, psf_info = psf_match(ap.before, ap.after, valid)
+    bm, rad_info = radiometric_match(b_psf, a_psf, valid)
+    rad_info["psf_match"] = psf_info
+    after_cmp = a_psf  # image used for comparison (possibly PSF-matched); display uses the original
     resid = diag.check_rms_px if diag.check_rms_px and np.isfinite(diag.check_rms_px) else 1.0
-    cr = detect(bm, ap.after, valid, ap.fine.quality_map, res_m, resid, params)
+    cr = detect(bm, after_cmp, valid, ap.fine.quality_map, res_m, resid, params)
     timings["detect_A_s"] = time.time() - t
     t = time.time()
     sun_after = fuse.sun_vector_angle(oa["sub_solar_azimuth"], oa["north_azimuth"])
@@ -227,14 +230,14 @@ def run_pair(before_id: str, after_id: str, aoi: dict | None = None, *, db: Data
     ctx = fuse.FusionContext(res_m=res_m, center_lat=pinfo.center_lat, d_incidence=pinfo.d_incidence,
                              d_ls=pinfo.d_ls, d_sun_azimuth=pinfo.d_sun_azimuth, sun_angle_after=sun_after,
                              sun_angle_before=sun_before, reg_quality=diag.quality, reg_rms_px=resid,
-                             low_snr=bool(bad))
-    cands = fuse.characterise(bm, ap.after, cr, ap.fine.quality_map, ctx)
+                             low_snr=bool(bad), dust_storm=bool(dust_storm_epoch(ob["start_time"]) or dust_storm_epoch(oa["start_time"])))
+    cands = fuse.characterise(bm, after_cmp, cr, ap.fine.quality_map, ctx)
     timings["detect_B_s"] = time.time() - t
     t = time.time()
     ml_info = {"enabled": False}
     if use_ml and ml.available():
         try:
-            ml_info = ml.score_candidates(bm, ap.after, cr.analysis_mask, cands[:150], res_m)
+            ml_info = ml.score_candidates(bm, after_cmp, cr.analysis_mask, cands[:150], res_m)
         except Exception as e:  # ML is optional evidence; never fail the run on it
             rlog.warning(f"ML scoring failed: {e}")
             ml_info = {"enabled": False, "error": str(e)}
@@ -276,6 +279,10 @@ def run_pair(before_id: str, after_id: str, aoi: dict | None = None, *, db: Data
             c["evidence_for"].append(f"coincides with catalogued change {k['ref_id']} ({how}; {k['category']}, D={k['diameter_m']} m; "
                                      f"{k['source'].split(';')[0]})")
         c["classification"] = fuse.classify_status(c, known)
+        if diag.status == "poor" and c["classification"] in ("plausible_unverified", "known_documented"):
+            c["classification"] = "insufficient_evidence"
+            c["evidence_against"].append(f"pair registration is poor overall (quality {diag.quality:.2f}); "
+                                         "differences cannot be distinguished from misregistration")
 
     # ---- 4. outputs ------------------------------------------------------------------
     prog(0.85, "writing outputs")
