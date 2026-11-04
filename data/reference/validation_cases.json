@@ -1,0 +1,555 @@
+[
+ {
+  "ref_id": "D22-0230",
+  "lat": 32.2279,
+  "lon": 186.824,
+  "diameter_m": 1.84,
+  "hirise_id": "ESP_027555_2125",
+  "before_date": "2010-04-26",
+  "after_date": "2012-03-11",
+  "blast_zone_tone": "dark",
+  "positive": {
+   "before_id": "PSP_004440_2125_RED",
+   "after_id": "ESP_027555_2125_RED",
+   "suitability": 0.0403,
+   "d_incidence": 24.76,
+   "d_sun_azimuth": 48.02,
+   "dt_days": 1801.19,
+   "after_is_catalog_image": true
+  },
+  "negatives": [
+   {
+    "kind": "post-post",
+    "before_id": "ESP_026355_2125_RED",
+    "after_id": "ESP_027555_2125_RED",
+    "suitability": 0.4846,
+    "d_incidence": 3.86,
+    "d_sun_azimuth": 4.21,
+    "dt_days": 93.5
+   }
+  ]
+ },
+ {
+  "ref_id": "D22-0233",
+  "lat": 50.3748,
+  "lon": 219.7098,
+  "diameter_m": 4.28,
+  "hirise_id": "ESP_026802_2305",
+  "before_date": "2010-05-30",
+  "after_date": "2012-03-18",
+  "blast_zone_tone": "dark",
+  "positive": {
+   "before_id": "ESP_016108_2305_RED",
+   "after_id": "ESP_026802_2305_RED",
+   "suitability": 0.0858,
+   "d_incidence": 5.62,
+   "d_sun_azimuth": 17.2,
+   "dt_days": 833.29,
+   "after_is_catalog_image": true
+  },
+  "negatives": [
+   {
+    "kind": "post-post",
+    "before_id": "ESP_026802_2305_RED",
+    "after_id": "ESP_035228_2305_RED",
+    "suitability": 0.5476,
+    "d_incidence": 0.51,
+    "d_sun_azimuth": 0.9,
+    "dt_days": 656.57
+   },
+   {
+    "kind": "post-post",
+    "before_id": "ESP_026802_2305_RED",
+    "after_id": "ESP_027224_2305_RED",
+    "suitability": 0.5082,
+    "d_incidence": 2.14,
+    "d_sun_azimuth": 0.26,
+    "dt_days": 32.88
+   }
+  ]
+ },
+ {
+  "ref_id": "D22-0343",
+  "lat": 24.8777,
+  "lon": 245.2931,
+  "diameter_m": 4.62,
+  "hirise_id": "ESP_034357_2050",
+  "before_date": "2012-03-05",
+  "after_date": "2012-09-25",
+  "blast_zone_tone": "dark",
+  "positive": {
+   "before_id": "ESP_018784_2050_RED",
+   "after_id": "ESP_034357_2050_RED",
+   "suitability": 0.4776,
+   "d_incidence": 5.56,
+   "d_sun_azimuth": 2.33,
+   "dt_days": 1213.47,
+   "after_is_catalog_image": true
+  },
+  "negatives": [
+   {
+    "kind": "post-post",
+    "before_id": "ESP_034357_2050_RED",
+    "after_id": "ESP_045012_2050_RED",
+    "suitability": 0.8545,
+    "d_incidence": 0.93,
+    "d_sun_azimuth": 3.45,
+    "dt_days": 830.2
+   },
+   {
+    "kind": "post-post",
+    "before_id": "ESP_045012_2050_RED",
+    "after_id": "ESP_062748_2050_RED",
+    "suitability": 0.5957,
+    "d_incidence": 3.96,
+    "d_sun_azimuth": 0.18,
+    "dt_days": 1381.99
+   }
+  ]
+ },
+ {
+  "ref_id": "D22-0412",
+  "lat": 55.5702,
+  "lon": 240.5211,
+  "diameter_m": 2.4,
+  "hirise_id": "ESP_036269_2360",
+  "before_date": "2014-01-02",
+  "after_date": "2014-04-06",
+  "blast_zone_tone": "dark",
+  "positive": {
+   "before_id": "ESP_024665_2360_RED",
+   "after_id": "ESP_036269_2360_RED",
+   "suitability": 0.0442,
+   "d_incidence": 3.39,
+   "d_sun_azimuth": 24.11,
+   "dt_days": 904.2,
+   "after_is_catalog_image": true
+  },
+  "negatives": [
+   {
+    "kind": "post-post",
+    "before_id": "ESP_036269_2360_RED",
+    "after_id": "ESP_071717_2360_RED",
+    "suitability": 0.6175,
+    "d_incidence": 2.8,
+    "d_sun_azimuth": 1.25,
+    "dt_days": 2761.9
+   }
+  ]
+ },
+ {
+  "ref_id": "D22-0514",
+  "lat": 4.5105,
+  "lon": 135.8219,
+  "diameter_m": 5.5,
+  "hirise_id": "ESP_043605_1845",
+  "before_date": "2015-09-15",
+  "after_date": "2015-10-13",
+  "blast_zone_tone": "dual",
+  "positive": {
+   "before_id": "ESP_039913_1845_RED",
+   "after_id": "ESP_043605_1845_RED",
+   "suitability": 0.1544,
+   "d_incidence": 1.99,
+   "d_sun_azimuth": 66.77,
+   "dt_days": 287.69,
+   "after_is_catalog_image": true
+  },
+  "negatives": [
+   {
+    "kind": "post-post",
+    "before_id": "ESP_044027_1845_RED",
+    "after_id": "ESP_044937_1845_RED",
+    "suitability": 0.6921,
+    "d_incidence": 1.15,
+    "d_sun_azimuth": 3.55,
+    "dt_days": 70.9
+   },
+   {
+    "kind": "post-post",
+    "before_id": "ESP_043605_1845_RED",
+    "after_id": "ESP_044027_1845_RED",
+    "suitability": 0.6496,
+    "d_incidence": 1.64,
+    "d_sun_azimuth": 1.67,
+    "dt_days": 32.88
+   }
+  ]
+ },
+ {
+  "ref_id": "D22-0537",
+  "lat": 27.7303,
+  "lon": 261.0102,
+  "diameter_m": 8.14,
+  "hirise_id": "ESP_045473_2080",
+  "before_date": "2015-05-08",
+  "after_date": "2015-08-16",
+  "blast_zone_tone": "dark",
+  "positive": {
+   "before_id": "ESP_034897_2080_RED",
+   "after_id": "ESP_045473_2080_RED",
+   "suitability": 0.7569,
+   "d_incidence": 1.24,
+   "d_sun_azimuth": 8.96,
+   "dt_days": 824.03,
+   "after_is_catalog_image": true
+  },
+  "negatives": [
+   {
+    "kind": "post-post",
+    "before_id": "ESP_045473_2080_RED",
+    "after_id": "ESP_071690_2080_RED",
+    "suitability": 0.4738,
+    "d_incidence": 5.0,
+    "d_sun_azimuth": 6.28,
+    "dt_days": 2042.67
+   }
+  ]
+ },
+ {
+  "ref_id": "D22-0542",
+  "lat": 6.211246,
+  "lon": 254.3588,
+  "diameter_m": 6.38,
+  "hirise_id": "ESP_045236_1865",
+  "before_date": "2013-11-04",
+  "after_date": "2015-08-25",
+  "blast_zone_tone": "dark",
+  "positive": {
+   "before_id": "PSP_007378_1860_RED",
+   "after_id": "ESP_045236_1865_RED",
+   "suitability": 0.4814,
+   "d_incidence": 7.05,
+   "d_sun_azimuth": 6.97,
+   "dt_days": 2949.92,
+   "after_is_catalog_image": true
+  },
+  "negatives": []
+ },
+ {
+  "ref_id": "D22-0546",
+  "lat": 28.1384,
+  "lon": 250.7709,
+  "diameter_m": 4.32,
+  "hirise_id": "ESP_045447_2085",
+  "before_date": "2012-09-09",
+  "after_date": "2015-09-11",
+  "blast_zone_tone": "dark",
+  "positive": {
+   "before_id": "ESP_028344_2085_RED",
+   "after_id": "ESP_045447_2085_RED",
+   "suitability": 0.4149,
+   "d_incidence": 8.89,
+   "d_sun_azimuth": 5.16,
+   "dt_days": 1332.64,
+   "after_is_catalog_image": true
+  },
+  "negatives": []
+ },
+ {
+  "ref_id": "D22-0673",
+  "lat": 23.0144,
+  "lon": 249.8732,
+  "diameter_m": 6.63,
+  "hirise_id": "ESP_048572_2035",
+  "before_date": "2016-01-10",
+  "after_date": "2016-09-02",
+  "blast_zone_tone": "dark",
+  "positive": {
+   "before_id": "PSP_004952_2035_RED",
+   "after_id": "ESP_048572_2035_RED",
+   "suitability": 0.6131,
+   "d_incidence": 3.3,
+   "d_sun_azimuth": 0.22,
+   "dt_days": 3398.93,
+   "after_is_catalog_image": true
+  },
+  "negatives": [
+   {
+    "kind": "post-post",
+    "before_id": "ESP_048572_2035_RED",
+    "after_id": "ESP_057394_2035_RED",
+    "suitability": 0.9355,
+    "d_incidence": 0.1,
+    "d_sun_azimuth": 0.17,
+    "dt_days": 687.39
+   }
+  ]
+ },
+ {
+  "ref_id": "D22-0761",
+  "lat": 26.919,
+  "lon": 266.898,
+  "diameter_m": 3.94,
+  "hirise_id": "ESP_050958_2070",
+  "before_date": "2011-04-08",
+  "after_date": "2017-04-15",
+  "blast_zone_tone": "dark",
+  "positive": {
+   "before_id": "ESP_017280_2070_RED",
+   "after_id": "ESP_050958_2070_RED",
+   "suitability": 0.2984,
+   "d_incidence": 4.2,
+   "d_sun_azimuth": 31.52,
+   "dt_days": 2624.2,
+   "after_is_catalog_image": true
+  },
+  "negatives": []
+ },
+ {
+  "ref_id": "D22-0786",
+  "lat": 21.41007,
+  "lon": 186.722,
+  "diameter_m": 3.42,
+  "hirise_id": "ESP_051884_2015",
+  "before_date": "2013-01-07",
+  "after_date": "2016-09-12",
+  "blast_zone_tone": "dark",
+  "positive": {
+   "before_id": "ESP_026632_2015_RED",
+   "after_id": "ESP_051884_2015_RED",
+   "suitability": 0.4705,
+   "d_incidence": 6.61,
+   "d_sun_azimuth": 10.9,
+   "dt_days": 1967.64,
+   "after_is_catalog_image": true
+  },
+  "negatives": []
+ },
+ {
+  "ref_id": "D22-0884",
+  "lat": 8.805,
+  "lon": 254.482,
+  "diameter_m": 6.24,
+  "hirise_id": "ESP_056708_1890",
+  "before_date": "2012-03-02",
+  "after_date": "2017-05-05",
+  "blast_zone_tone": "dark",
+  "positive": {
+   "before_id": "PSP_006165_1890_RED",
+   "after_id": "ESP_056708_1890_RED",
+   "suitability": 0.108,
+   "d_incidence": 17.98,
+   "d_sun_azimuth": 15.43,
+   "dt_days": 3938.36,
+   "after_is_catalog_image": true
+  },
+  "negatives": [
+   {
+    "kind": "post-post",
+    "before_id": "ESP_055943_1890_RED",
+    "after_id": "ESP_056708_1890_RED",
+    "suitability": 0.4802,
+    "d_incidence": 0.46,
+    "d_sun_azimuth": 16.03,
+    "dt_days": 59.59
+   }
+  ]
+ },
+ {
+  "ref_id": "D22-0887",
+  "lat": 17.762,
+  "lon": 226.942,
+  "diameter_m": 9.12,
+  "hirise_id": "ESP_056155_1980",
+  "before_date": "2016-12-23",
+  "after_date": "2018-04-23",
+  "blast_zone_tone": "dark",
+  "positive": {
+   "before_id": "PSP_007023_1980_RED",
+   "after_id": "ESP_056155_1980_RED",
+   "suitability": 0.123,
+   "d_incidence": 20.2,
+   "d_sun_azimuth": 21.82,
+   "dt_days": 3828.42,
+   "after_is_catalog_image": true
+  },
+  "negatives": []
+ },
+ {
+  "ref_id": "D22-0971",
+  "lat": 18.7017,
+  "lon": 242.5864,
+  "diameter_m": 3.83,
+  "hirise_id": "ESP_059491_1990",
+  "before_date": "2017-09-04",
+  "after_date": "2018-05-29",
+  "blast_zone_tone": "dark",
+  "positive": {
+   "before_id": "ESP_037324_1990_RED",
+   "after_id": "ESP_059491_1990_RED",
+   "suitability": 0.1551,
+   "d_incidence": 18.01,
+   "d_sun_azimuth": 17.88,
+   "dt_days": 1727.2,
+   "after_is_catalog_image": true
+  },
+  "negatives": [
+   {
+    "kind": "post-post",
+    "before_id": "ESP_059491_1990_RED",
+    "after_id": "ESP_085787_1990_RED",
+    "suitability": 0.6198,
+    "d_incidence": 3.77,
+    "d_sun_azimuth": 1.38,
+    "dt_days": 2048.83
+   }
+  ]
+ },
+ {
+  "ref_id": "D22-1001",
+  "lat": 5.167,
+  "lon": 146.711,
+  "diameter_m": 3.32,
+  "hirise_id": "ESP_060444_1850",
+  "before_date": "2015-01-28",
+  "after_date": "2018-05-26",
+  "blast_zone_tone": "dark",
+  "positive": {
+   "before_id": "ESP_027372_1850_RED",
+   "after_id": "ESP_060444_1850_RED",
+   "suitability": 0.3631,
+   "d_incidence": 10.3,
+   "d_sun_azimuth": 5.49,
+   "dt_days": 2576.94,
+   "after_is_catalog_image": true
+  },
+  "negatives": []
+ },
+ {
+  "ref_id": "D22-1020",
+  "lat": 27.4086,
+  "lon": 261.1571,
+  "diameter_m": 4.6,
+  "hirise_id": "ESP_063433_2075",
+  "before_date": "2019-08-14",
+  "after_date": "2019-10-07",
+  "blast_zone_tone": "dark",
+  "positive": {
+   "before_id": "ESP_037020_2075_RED",
+   "after_id": "ESP_063433_2075_RED",
+   "suitability": 0.8322,
+   "d_incidence": 1.69,
+   "d_sun_azimuth": 0.21,
+   "dt_days": 2058.06,
+   "after_is_catalog_image": true
+  },
+  "negatives": [
+   {
+    "kind": "pre-pre",
+    "before_id": "ESP_027249_2075_RED",
+    "after_id": "ESP_035820_2075_RED",
+    "suitability": 0.7976,
+    "d_incidence": 0.31,
+    "d_sun_azimuth": 2.01,
+    "dt_days": 667.87
+   },
+   {
+    "kind": "pre-pre",
+    "before_id": "ESP_016700_2075_RED",
+    "after_id": "ESP_026049_2075_RED",
+    "suitability": 0.7897,
+    "d_incidence": 0.03,
+    "d_sun_azimuth": 6.21,
+    "dt_days": 728.49
+   },
+   {
+    "kind": "post-post",
+    "before_id": "ESP_077901_2075_RED",
+    "after_id": "ESP_086340_2075_RED",
+    "suitability": 0.7895,
+    "d_incidence": 0.1,
+    "d_sun_azimuth": 8.67,
+    "dt_days": 657.59
+   },
+   {
+    "kind": "post-post",
+    "before_id": "ESP_076437_2075_RED",
+    "after_id": "ESP_093882_2075_RED",
+    "suitability": 0.7883,
+    "d_incidence": 1.89,
+    "d_sun_azimuth": 3.37,
+    "dt_days": 1359.37
+   }
+  ]
+ },
+ {
+  "ref_id": "D22-1128",
+  "lat": -2.718,
+  "lon": 354.863,
+  "diameter_m": 20.84,
+  "hirise_id": "ESP_065843_1775",
+  "before_date": "2019-07-24",
+  "after_date": "2020-01-06",
+  "blast_zone_tone": "light",
+  "positive": {
+   "before_id": "ESP_055702_1775_RED",
+   "after_id": "ESP_065843_1775_RED",
+   "suitability": 0.5817,
+   "d_incidence": 1.07,
+   "d_sun_azimuth": 24.3,
+   "dt_days": 790.16,
+   "after_is_catalog_image": true
+  },
+  "negatives": [
+   {
+    "kind": "pre-pre",
+    "before_id": "ESP_022670_1775_RED",
+    "after_id": "ESP_023092_1775_RED",
+    "suitability": 0.6247,
+    "d_incidence": 2.73,
+    "d_sun_azimuth": 8.29,
+    "dt_days": 32.88
+   },
+   {
+    "kind": "pre-pre",
+    "before_id": "ESP_022670_1775_RED",
+    "after_id": "ESP_055702_1775_RED",
+    "suitability": 0.1567,
+    "d_incidence": 15.41,
+    "d_sun_azimuth": 27.37,
+    "dt_days": 2573.86
+   }
+  ]
+ },
+ {
+  "ref_id": "D22-1148",
+  "lat": 6.427,
+  "lon": 148.015,
+  "diameter_m": 3.37,
+  "hirise_id": "ESP_067051_1865",
+  "before_date": "2019-08-13",
+  "after_date": "2020-09-01",
+  "blast_zone_tone": "dark",
+  "positive": {
+   "before_id": "ESP_047376_1865_RED",
+   "after_id": "ESP_067051_1865_RED",
+   "suitability": 0.3584,
+   "d_incidence": 8.78,
+   "d_sun_azimuth": 9.51,
+   "dt_days": 1533.04,
+   "after_is_catalog_image": true
+  },
+  "negatives": []
+ },
+ {
+  "ref_id": "D22-1157",
+  "lat": 38.87262,
+  "lon": 55.21625,
+  "diameter_m": 5.5388,
+  "hirise_id": "ESP_067173_2190",
+  "before_date": "2012-06-14",
+  "after_date": "2018-04-23",
+  "blast_zone_tone": "dark",
+  "positive": {
+   "before_id": "PSP_006660_2190_RED",
+   "after_id": "ESP_067173_2190_RED",
+   "suitability": 0.1365,
+   "d_incidence": 17.44,
+   "d_sun_azimuth": 11.43,
+   "dt_days": 4715.17,
+   "after_is_catalog_image": true
+  },
+  "negatives": []
+ }
+]

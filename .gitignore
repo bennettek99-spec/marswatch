@@ -1,0 +1,14 @@
+.venv/
+__pycache__/
+*.pyc
+data/cache/
+data/runs/
+data/index/*.TAB
+data/marswatch.db*
+frontend/node_modules/
+frontend/dist/
+.pytest_cache/
+*.egg-info/
+data/logs/
+data/validation/partial_*.json
+frontend/tsconfig.tsbuildinfo

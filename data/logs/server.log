@@ -1,0 +1,27 @@
+INFO:     Started server process [3503]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:49862 - "GET /api/candidates?status=known_documented&limit=1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42126 - "GET /viewer/PSP_007023_1980__ESP_056155_1980__20261104T032830_fdcf0e HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42126 - "GET /assets/index-xG0oEl7O.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42134 - "GET /assets/index-5E8Jvn0c.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42126 - "GET /api/runs/PSP_007023_1980__ESP_056155_1980__20261104T032830_fdcf0e HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42146 - "GET /runs/PSP_007023_1980__ESP_056155_1980__20261104T032830_fdcf0e/mask.png HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42134 - "GET /runs/PSP_007023_1980__ESP_056155_1980__20261104T032830_fdcf0e/after.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42142 - "GET /runs/PSP_007023_1980__ESP_056155_1980__20261104T032830_fdcf0e/heat.png HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42126 - "GET /runs/PSP_007023_1980__ESP_056155_1980__20261104T032830_fdcf0e/before.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42126 - "GET /candidates/667 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42126 - "GET /api/candidates/667 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42126 - "GET /runs/ESP_039913_1845__ESP_043605_1845__20261104T032439_df8810/chips/cand_003.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42126 - "GET /explorer HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42126 - "GET /api/map HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45728 - "GET /console HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45728 - "GET /api/jobs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45750 - "GET /api/logs?since_id=0 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45740 - "GET /api/overview HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45738 - "GET /api/system HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45738 - "GET /api/logs?since_id=525 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45738 - "GET /api/jobs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45740 - "GET /api/logs?since_id=525 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45738 - "GET /api/system HTTP/1.1" 200 OK

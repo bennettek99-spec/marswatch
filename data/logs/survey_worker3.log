@@ -1,0 +1,12 @@
+03:34:39 WARNING marswatch.worker: re-queued 1 interrupted jobs
+03:34:39 INFO    marswatch.worker: worker started with 1 threads
+03:34:39 INFO    marswatch.pipeline: run PSP_004175_2060__ESP_057118_2060__20261104T033439_020738: grid 3164x3793 @ 1.0 m (12.00 km²)
+03:34:39 INFO    marswatch.align: coarse @4.0 m: dx=54.6 dy=-4.4 peak=0.35 distinct=0.20
+03:34:51 INFO    marswatch.align: refined @2 m: dx=55.4 dy=-2.7 peak=0.25
+03:34:56 INFO    marswatch.align: block affine from 9/9 blocks: [[1.0004, 0.0025, -7.7839], [-0.0003, 0.9953, 14.1596]]
+03:35:54 INFO    marswatch.align: fine registration: matched 2754/2784, inliers 1858, checkpoint RMS 0.72px (2784 pts), NCC 0.21->0.85, quality 0.62 [good]
+03:36:32 INFO    marswatch.pipeline: run complete: 22 candidates, {'known_documented': 0, 'plausible_unverified': 14, 'likely_artifact': 0, 'insufficient_evidence': 8}, 113.1s
+03:36:32 INFO    marswatch.worker: job 4 (analyze_pair) done: {'run_id': 'PSP_004175_2060__ESP_057118_2060__20261104T033439_020738', 'n_candidates': 22, 'by_status': {'known_documented': 0, 'plausible_unverified': 14, 'likely_artifact': 0, 'insufficient_evidence': 8}}
+03:36:32 INFO    marswatch.pipeline: run PSP_008513_2060__ESP_045435_2055__20261104T033632_582a96: grid 3158x1898 @ 1.0 m (5.99 km²)
+03:36:37 INFO    marswatch.align: coarse @4.0 m: dx=35.4 dy=-31.9 peak=0.65 distinct=0.61
+03:36:39 INFO    marswatch.align: refined @2 m: dx=35.2 dy=-31.9 peak=0.70

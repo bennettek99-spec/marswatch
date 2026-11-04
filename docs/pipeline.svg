@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1180 330" font-family="Inter,Helvetica,Arial,sans-serif">
+<defs><marker id="a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L10 5L0 10z" fill="#ff8a50"/></marker></defs>
+<rect width="1180" height="330" rx="14" fill="#13161b"/>
+<text x="20" y="40" fill="#e7e9ec" font-size="20" font-weight="700" letter-spacing="2">MARSWATCH pipeline</text>
+<text x="250" y="40" fill="#a8b0bb" font-size="13">one job per (before, after, area of interest) — every step logged, parameters + code hash recorded</text>
+<rect x="20" y="80" width="118" height="150" rx="10" fill="#1d222a" stroke="#363f4b" stroke-width="1.6"/>
+<text x="79.0" y="108" fill="#e7e9ec" font-size="13.5" font-weight="650" text-anchor="middle">PDS index</text>
+<text x="79.0" y="136" fill="#a8b0bb" font-size="11" text-anchor="middle">103,933 HiRISE RED RDRs</text>
+<text x="79.0" y="154" fill="#a8b0bb" font-size="11" text-anchor="middle">footprints · angles · Ls</text>
+<path d="M139 155.0 L148 155.0" stroke="#ff8a50" stroke-width="2" marker-end="url(#a)"/>
+<rect x="150" y="80" width="118" height="150" rx="10" fill="#1d222a" stroke="#363f4b" stroke-width="1.6"/>
+<text x="209.0" y="108" fill="#e7e9ec" font-size="13.5" font-weight="650" text-anchor="middle">Pair discovery</text>
+<text x="209.0" y="136" fill="#a8b0bb" font-size="11" text-anchor="middle">R-tree + exact overlap</text>
+<text x="209.0" y="154" fill="#a8b0bb" font-size="11" text-anchor="middle">suitability · diversity</text>
+<path d="M269 155.0 L278 155.0" stroke="#ff8a50" stroke-width="2" marker-end="url(#a)"/>
+<rect x="280" y="80" width="118" height="150" rx="10" fill="#1d222a" stroke="#363f4b" stroke-width="1.6"/>
+<text x="339.0" y="108" fill="#e7e9ec" font-size="13.5" font-weight="650" text-anchor="middle">Windowed reads</text>
+<text x="339.0" y="136" fill="#a8b0bb" font-size="11" text-anchor="middle">USGS COG (range reqs)</text>
+<text x="339.0" y="154" fill="#a8b0bb" font-size="11" text-anchor="middle">PDS JP2 fallback · cache</text>
+<path d="M399 155.0 L408 155.0" stroke="#ff8a50" stroke-width="2" marker-end="url(#a)"/>
+<rect x="410" y="80" width="118" height="150" rx="10" fill="#1d222a" stroke="#363f4b" stroke-width="1.6"/>
+<text x="469.0" y="108" fill="#e7e9ec" font-size="13.5" font-weight="650" text-anchor="middle">Input QC</text>
+<text x="469.0" y="136" fill="#a8b0bb" font-size="11" text-anchor="middle">structure-SNR gate</text>
+<text x="469.0" y="154" fill="#a8b0bb" font-size="11" text-anchor="middle">(dust storms, haze)</text>
+<path d="M529 155.0 L538 155.0" stroke="#ff8a50" stroke-width="2" marker-end="url(#a)"/>
+<rect x="540" y="80" width="118" height="150" rx="10" fill="#1d222a" stroke="#e0662f" stroke-width="1.6"/>
+<text x="599.0" y="108" fill="#e7e9ec" font-size="13.5" font-weight="650" text-anchor="middle">Registration</text>
+<text x="599.0" y="136" fill="#a8b0bb" font-size="11" text-anchor="middle">coarse NCC → dense field</text>
+<text x="599.0" y="154" fill="#a8b0bb" font-size="11" text-anchor="middle">held-out checkpoints</text>
+<path d="M659 155.0 L668 155.0" stroke="#ff8a50" stroke-width="2" marker-end="url(#a)"/>
+<rect x="670" y="80" width="118" height="150" rx="10" fill="#1d222a" stroke="#363f4b" stroke-width="1.6"/>
+<text x="729.0" y="108" fill="#e7e9ec" font-size="13.5" font-weight="650" text-anchor="middle">Radiometry</text>
+<text x="729.0" y="136" fill="#a8b0bb" font-size="11" text-anchor="middle">blockwise trimmed</text>
+<text x="729.0" y="154" fill="#a8b0bb" font-size="11" text-anchor="middle">gain/offset fit</text>
+<path d="M789 155.0 L798 155.0" stroke="#ff8a50" stroke-width="2" marker-end="url(#a)"/>
+<rect x="800" y="80" width="118" height="150" rx="10" fill="#1d222a" stroke="#e0662f" stroke-width="1.6"/>
+<text x="859.0" y="108" fill="#e7e9ec" font-size="13.5" font-weight="650" text-anchor="middle">Detection</text>
+<text x="859.0" y="136" fill="#a8b0bb" font-size="11" text-anchor="middle">A: multi-scale z + SSIM</text>
+<text x="859.0" y="154" fill="#a8b0bb" font-size="11" text-anchor="middle">B: crater/streak/artifact</text>
+<text x="859.0" y="172" fill="#a8b0bb" font-size="11" text-anchor="middle">C: CNN feature change</text>
+<path d="M919 155.0 L928 155.0" stroke="#ff8a50" stroke-width="2" marker-end="url(#a)"/>
+<rect x="930" y="80" width="118" height="150" rx="10" fill="#1d222a" stroke="#363f4b" stroke-width="1.6"/>
+<text x="989.0" y="108" fill="#e7e9ec" font-size="13.5" font-weight="650" text-anchor="middle">Fusion</text>
+<text x="989.0" y="136" fill="#a8b0bb" font-size="11" text-anchor="middle">heuristic score</text>
+<text x="989.0" y="154" fill="#a8b0bb" font-size="11" text-anchor="middle">category · status</text>
+<path d="M1049 155.0 L1058 155.0" stroke="#ff8a50" stroke-width="2" marker-end="url(#a)"/>
+<rect x="1060" y="80" width="118" height="150" rx="10" fill="#1d222a" stroke="#363f4b" stroke-width="1.6"/>
+<text x="1119.0" y="108" fill="#e7e9ec" font-size="13.5" font-weight="650" text-anchor="middle">Outputs</text>
+<text x="1119.0" y="136" fill="#a8b0bb" font-size="11" text-anchor="middle">run.json · report.md</text>
+<text x="1119.0" y="154" fill="#a8b0bb" font-size="11" text-anchor="middle">DZI tiles · chips · DB</text>
+<text x="20" y="275" fill="#a8b0bb" font-size="12.5">Validation: Daubar et al. (2022) dated craters with HiRISE before/after · same-site pre-pre / post-post controls · held-out pairs · labelled synthetic injection &amp; known-warp tests</text>
+<text x="20" y="298" fill="#a8b0bb" font-size="12.5">Status classes: known documented · plausible unverified · likely artifact · insufficient evidence — never “confirmed discovery”.</text>
+</svg>

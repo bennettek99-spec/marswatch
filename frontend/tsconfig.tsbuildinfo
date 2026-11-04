@@ -1,0 +1,1 @@
+{"root":["./src/api.ts","./src/main.tsx","./src/vite-env.d.ts","./src/components/ui.tsx","./src/pages/CandidateDetail.tsx","./src/pages/Candidates.tsx","./src/pages/Console.tsx","./src/pages/Explorer.tsx","./src/pages/MissionControl.tsx","./src/pages/Validation.tsx","./src/pages/Viewer.tsx"],"version":"5.6.2"}
