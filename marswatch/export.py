@@ -116,7 +116,23 @@ def export_static(out_dir: Path, max_side: int = 2400, quality: int = 78) -> dic
     m["areas"] = [a for a in m["areas"] if a["run_id"] in keep]
     m["candidates"] = [c for c in m["candidates"] if c["id"] in ids]
     S["map"] = m
-    S["overview"] = A.overview()
+    ov = A.overview()
+    # headline numbers describe the runs shipped in this snapshot (current survey + validation positives),
+    # not every historical/development run in the database
+    docs = list(S["runDocs"].values())
+    ov["runs_done"] = len(docs)
+    ov["pairs_analysed"] = len({d["pair_id"] for d in docs})
+    ov["runs_by_kind"] = {k: sum(1 for d in docs if d["kind"] == k) for k in {d["kind"] for d in docs}}
+    ov["area_km2"] = sum(d["stats"].get("analysed_km2", 0) for d in docs)
+    ov["candidates"] = len(cands)
+    ov["candidates_by_status"] = {}
+    ov["candidates_by_category"] = {}
+    for c in cands:
+        ov["candidates_by_status"][c["classification"]] = ov["candidates_by_status"].get(c["classification"], 0) + 1
+        ov["candidates_by_category"][c["category"]] = ov["candidates_by_category"].get(c["category"], 0) + 1
+    ov["timeline"] = [t for t in ov["timeline"] if t["finished_at"] and any(abs(t["started_at"] - (r["started_at"] or 0)) < 1e-3
+                                                                            for r in S["runs"])]
+    S["overview"] = ov
     S["validation"] = A.validation()
     S["docs"] = {}
     for name in ("VALIDATION", "VALIDATION_RESULTS", "SURVEY_REPORT", "LIMITATIONS", "METHODS"):
